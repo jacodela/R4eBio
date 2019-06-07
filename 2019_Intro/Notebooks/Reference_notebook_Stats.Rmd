@@ -17,7 +17,7 @@ There are many good resources on the internet for learning both statistics and R
   * https://www.statmethods.net/index.html : short and clear explanation of R functions
   * https://stats.stackexchange.com/ : forum where people ask and answer all kind of statistics-related questions.
   * https://stackoverflow.com/ : similar to StatsExchange, but for programming-related questions. You will get to love this site, seriously. If you want to do anything in R (or any other programming language), or you keep bumping into an error, just google it; most likely someone has already asked that question in StackOverflow and you will likely get one (or more) answers.
-  * https://www.r-bloggers.com/ : an aggregator of people bloging various R stuff. You can search for tutorials, news, opinions and other R-related things.
+* https://www.r-bloggers.com/ : an aggregator of people bloging various R stuff. You can search for tutorials, news, opinions and other R-related things.
 * http://jef.works/R-style-guide/ : Best practices for readable, sharable, and verifiable R code
 
 ## Libraries
