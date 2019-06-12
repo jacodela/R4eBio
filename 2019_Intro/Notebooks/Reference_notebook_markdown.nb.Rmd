@@ -1,0 +1,32 @@
+---
+title: "Intro to Markdown"
+output: html_notebook
+---
+
+# Max Planck Institute for Developmental Biology
+
+## Research
+The variety of topics investigated by scientists at the MPI for Developmental Biology is extensive, although all subjects have a biological theme. The cutting-edge technology in molecular and cellular biology and computational science available at the institute is enabling scientists to gain increasing insight into cellular and developmental processes. A highly dynamic and interdisciplinary approach is applied from the molecular level to cells, tissues, and the whole organism. [More](http://eb.mpg.de/research/)
+
+## Departments of the MPI for Developmental Biology
+
+* **Department 1** - *Protein Evolution*
+* **Department 2** - *Biochemistry*
+* **Department 3** - *Microbiome Science*
+* **Department 4** - *Evolutionary Biology*
+* **Department 5** - *Cell Biology*
+* **Department 6** - *Molecular Biology*
+
+## Facilities
+The core facilities of the MPI for Developmental Biology are:
+
+1. Electron Microscopy
+1. Light Microscopy
+1. NMR Spectroscopy
+1. Genome Center
+1. X-Ray Crystallography.
+
+The facilities offer a broad range of methods and techniques and provide a motivating and helpful environment where researchers/users are trained and supported throughout their projects.
+
+## Events
+Every other year the institutes of the Tübingen campus invite the general public to their **Open House** or participate in the **TÜFF** (*Tübinger Fenster für Forschung*), a science fair. Scientists participate regularly at events like the „Kinder-Uni“ (*Children's University*), the **Maus-Türöffner-Tag** (open house event for children), as well as in presentations and podium discussions hosted by the MPI for Developmental Biology, FML or the partner institutes. 
