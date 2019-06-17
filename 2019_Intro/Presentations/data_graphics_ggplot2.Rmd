@@ -1,0 +1,158 @@
+---
+title: "Data graphics with ggplot2"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Why data graphics? 
+
+## What kind of graph to use?
+
+## How to plot it?
+
+ * Base R `graphics`
+ * `lattice` and `grid`
+ * `ggplot2`
+
+## General rules for data graphics
+
+ 1. Display data values using position or length
+ 2. Use horizontal lengths in preference to vertical lengths
+ 3. Watch your data-ink ratio
+ 4. Think very carefully before using color to represent data values
+
+### "Do nots"
+
+ 5. Do *not* use areas to represent data values
+ 6. *Please* do not use angles or slopes to represent data values
+ 7. *Please, please* do not use volumes to represent data values
+
+Source: [Paul Murrell, "Comment"](https://www.stat.auckland.ac.nz/~paul/MurrellCommentGelmanUnwin.pdf)
+
+## Tables vs Graphics
+
+## Elements of a plot
+
+| Element                    | Function name prefix |
+|----------------------------|----------------------|
+| Data                       | `ggplot(data=...)`   |
+| Aesthetic mapping          | `ggplot(aes(...))`   |
+| Geometric object           | `geom_...`           |
+| Statistical transformation | `stat_...`           |
+| Scaling                    | `scale_...`          |
+| Coordinate system          | `coord_...`          |
+| Facetting                  | `facet_...`          |
+
+## Aesthetic mappings
+
+```{r echo=TRUE}
+data(mtcars)
+```
+
+## Are these colors "evenly spaced"?
+
+```{r}
+palette(rainbow(6, # presented by Tom Clancy
+                start=0)) 
+barplot(rep(1,times=6),col=1:6, axes=FALSE)
+```
+
+## Be careful with colors
+
+ * Perception is influenced by both hue and intensity
+ * Use color-blind safe palettes where possible
+ * Avoid using color for quantitative scales
+
+## Where to put the cutoff? 
+
+```{r echo=FALSE}
+data(diamonds)
+(ggplot(diamonds, aes(x=depth, y=price)) 
+ + geom_density_2d() 
+ + stat_density_2d(geom="raster", aes(fill=stat(density)), contour=FALSE)
+ + scale_fill_gradientn(colors=rainbow(6,start=0)) # Destroy your retinas
+ + scale_y_log10() # Make the spread of values easier to see
+ )
+```
+
+## What about now?
+
+```{r echo=FALSE}
+(ggplot(diamonds, aes(x=depth, y=price)) 
+ + geom_density_2d() 
+ + stat_density_2d(geom="raster", aes(fill=stat(density)), contour=FALSE)
+ + scale_y_log10() # Make the spread of values easier to see
+ )
+```
+
+
+## Building a plot
+
+ 1. Get data object
+ 2. Check data structure
+ 3. Decide what to plot, and what aesthetic mapping to use
+ 4. Choose the geometric object(s)
+ 5. Adjust the scales if necessary
+ 6. Facet by factors if necessary
+ 7. Add labels to the plot
+
+## Get data object. Check data structure
+ 
+```{r echo=TRUE}
+data(mtcars)
+str(mtcars)
+```
+
+## Decide what to plot, and what aesthetic mapping to use
+
+```{r echo=TRUE}
+mtcars.plot <- ggplot(mtcars, aes(x=hp,y=mpg,col=cyl))
+```
+
+## Choose the geometric object(s)
+
+```{r echo=TRUE}
+mtcars.plot + geom_point()
+```
+
+## Adjust the scales if necessary
+
+```{r echo=TRUE}
+mtcars.plot + geom_point() + scale_y_log10()
+```
+
+## Facet by factors if necessary
+ 
+```{r echo=TRUE}
+mtcars.plot + geom_point() + scale_y_log10() + facet_wrap(~cyl)
+```
+
+"Wait, didn't you say facet by **factors**?"
+
+## Add labels to the plot
+
+```{r echo=TRUE}
+(mtcars.plot + geom_point() 
+ + labs(title="motorcars",x="horsepower",
+        y="miles per gallon",col="cylinders"))
+```
+
+## Now it's your turn to try... 
+
+ * Import data files in `R4eBio/2019_Intro/Data/` 
+ * Scatter plot murders vs. population (`murders.tsv`)
+   * Bored? Color by region, facet by region, label by state abbreviation (hint: `geom_text()`)
+   * Still bored? Add a trend line (hint: `geom_smooth()`), choose a linear model
+ * Histogram, violinplot, or boxplot of heights (`heights.tsv`)
+   * Bored? Color by sex, facet by sex (in one row, then one column)
+ * Line plot infant mortality by country per year (`gapminder.tsv`) (hint: `geom_line()` and `group` aesthetic)
+   * Bored? Make lines transparent, color by continent, overlay with trend lines (one per continent), facet by continent
+
+## Learn more
+
+ * [ggplot2 Function Reference](https://ggplot2.tidyverse.org/reference/index.html)
+ * `Reference_notebook_ggplot2.Rmd` in the `R4eBio/2019_Intro/Notebooks/` folder - worked examples and links to more resources
