@@ -25,11 +25,6 @@ There are many good resources on the internet for learning both statistics and R
 
 ```
 
-# Markdown
-```{r}
-
-```
-
 # Summary statistics
 This section is adapted from the *Descriptive Statistics and Graphics* of STHDA, available from http://www.sthda.com/english/wiki/descriptive-statistics-and-graphics
 
