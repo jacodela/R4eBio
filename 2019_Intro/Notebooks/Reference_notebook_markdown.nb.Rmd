@@ -3,6 +3,71 @@ title: "Intro to Markdown"
 output: html_notebook
 ---
 
+Markdown is a way of formating or styling text from plain form to HTML. You can use to write reproducible, dynamic reports that combine text, images and code. These reports can be then exported as pdf, doc or html files.
+
+****
+
+Compare the formating in markdown and compare with the result generated in the viewer pane of Rstudio:
+
+Plain text   
+
+End a line with two spaces to start a new paragraph.   
+
+*italics* and _italics_   
+
+**bold** and __bold__   
+
+superscript^2^   
+
+~~strikethrough~~   
+
+[Hyperlink](http://eb.mpg.de/)   
+
+# Header 1   
+## Header 2  
+### Header 3   
+#### Header 4   
+##### Header 5   
+###### Header 6   
+
+endash: --   
+emdash: ---   
+ellipsis: ...   
+
+horizontal rule (or slide break):  
+
+****
+
+> block quote
+
+* unordered list 
+* item 2     
+    + sub-item 1     
+    + sub-item 2 
+
+1. ordered list 
+1. item 2 
+    1. sub-item 1     
+    1. sub-item 2 
+  
+| Column 1 | Column 2 | Column 3 |
+|----------|----------|----------|
+|  One | 1 | A |
+| Two | 2 | B |
+| Three | 3 | C |
+
+
+`inline code` can be inserted with backticks
+
+```
+# code block
+print '3 backticks'
+```
+
+****
+
+Take ~10 to 15 minutes to go through [this markdown interactive tutorial](https://commonmark.org/help/tutorial/). Once you are finished, go ahead and format the following text. Try to include all the elements of markdown styling you can.
+
 # Max Planck Institute for Developmental Biology
 
 ## Research
