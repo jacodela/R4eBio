@@ -26,7 +26,7 @@ There are many good resources on the internet for learning both statistics and R
 ```
 
 # Summary statistics
-This section is adapted from the *Descriptive Statistics and Graphics* of STHDA, available from http://www.sthda.com/english/wiki/descriptive-statistics-and-graphics
+This section is adapted from the *Descriptive Statistics and Graphics* of [STHDA](http://www.sthda.com/english/wiki/descriptive-statistics-and-graphics) 
 
 First, let's load the tables we will use and explore their contents.
 ```{r Load gapminder}
@@ -184,7 +184,10 @@ head(HE_color)
 
 First, we can obtain tables of frecuencies (or counts) of each of the variables using the function `table()`
 ```{r Example Table 1}
+# Table
 table(HE_color$Hair)
+# Convert to data frame
+as.data.frame(table(HE_color$Hair))
 ```
 
 *Excercise:* determine the number of students by sex and  by eye color (separately)
@@ -197,5 +200,33 @@ We can also create contingency tables with the same function by passing two vari
 
 ```{r Example Table 2}
 table(HE_color$Sex, HE_color$Eye)
+```
+
+To create tables according to multiple categorical variables, you can use `ftable()`, which takes as input a formula of the form `Cat1 + Cat2 ~ Cont`
+```{r Example Ftable}
+ftable(Sex + Hair ~ Eye, data = HE_color)
+```
+
+You can use functions to get information from table objects. For example, if you are interested in the margin sums of a table, you can use the `margin.table()` function
+```{r Example Margintable}
+# Table of Eye and Hair color
+HE_table =  table(HE_color$Hair, HE_color$Eye)
+HE_table
+# Margin 1 means by rows  
+margin.table(HE_table, margin = 1) 
+
+# Margin 2 means by columns
+margin.table(HE_table, margin = 2)
+```
+
+Finally, you can obtain a table of proportions using the `prop.table()` function. You should also specify whether 
+```{r Example Proptable}
+prop.table(HE_table)
+```
+
+*Excercise:* Determine whether `prop.table()` uses rows or columns totals to calculate the proportions. Now compute a proportion table in the oposite sense (i.e. if defaults if rows use columns, or if the default is columns, use rows); very it.
+
+```{r Excercise Proptable}
+
 ```
 
