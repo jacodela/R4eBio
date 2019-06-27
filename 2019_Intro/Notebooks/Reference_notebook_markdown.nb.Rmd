@@ -95,3 +95,32 @@ The facilities offer a broad range of methods and techniques and provide a motiv
 
 ## Events
 Every other year the institutes of the Tübingen campus invite the general public to their **Open House** or participate in the **TÜFF** (*Tübinger Fenster für Forschung*), a science fair. Scientists participate regularly at events like the „Kinder-Uni“ (*Children's University*), the **Maus-Türöffner-Tag** (open house event for children), as well as in presentations and podium discussions hosted by the MPI for Developmental Biology, FML or the partner institutes. 
+
+****
+
+One last thing before we continue with R. You can also execute code from an R markdown document. You saw that a code chunk is opened and closed by 3 backticks, but an extra thing must be added to have executable code, a set of curly brackets `{}` where you can specify the execution options. 
+
+To insert a code chunck, use the shortcut `Ctrl+Alt+I` or `Command+Option+I`
+
+```{r}
+# Hello world
+print("Hello world")
+```
+
+You can create a variable in one chunck...
+```{r}
+# create my_var
+my_var = 22/7
+```
+
+```{r}
+# print my_var
+my_var
+```
+
+
+```{r}
+head(mtcars)
+```
+
+
