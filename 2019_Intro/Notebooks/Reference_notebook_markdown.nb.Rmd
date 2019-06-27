@@ -6,7 +6,7 @@ output: html_notebook
 # Max Planck Institute for Developmental Biology
 
 ## Research
-The variety of topics investigated by scientists at the MPI for Developmental Biology is extensive, although all subjects have a biological theme. The cutting-edge technology in molecular and cellular biology and computational science available at the institute is enabling scientists to gain increasing insight into cellular and developmental processes. A highly dynamic and interdisciplinary approach is applied from the molecular level to cells, tissues, and the whole organism. [More](http://eb.mpg.de/research/)
+The variety of topics investigated by scientists at the MPI for Developmental Biology is extensive, although all subjects have a biological theme. The cutting-edge technology in molecular and cellular biology and computational science available at the institute is enabling scientists to gain increasing insight into cellular and developmental processes. A highly dynamic and interdisciplinary approach is applied from the molecular level to cells, tissues, and the whole organism. [Read more](http://eb.mpg.de/research/)
 
 ## Departments of the MPI for Developmental Biology
 

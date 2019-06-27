@@ -88,17 +88,17 @@ nested_LSE = round(log(sum(exp(LSE_vector))), 2)
 First, let's load the tables we will use and explore their contents.
 
 ```{r Load gapminder}
-gapminder = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/Data/gapminder.tsv")
+gapminder = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/gapminder.tsv")
 gapminder %>% glimpse
 ```
 
 ```{r Load polls}
-polls = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/Data/polls_us_election_2016.tsv")
+polls = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/polls_us_election_2016.tsv")
 polls %>% glimpse
 ```
 
 ```{r Load murders}
-murders = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/Data/murders.tsv")
+murders = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/murders.tsv")
 murders %>% glimpse
 ```
 
@@ -264,14 +264,69 @@ murders_rate %>% head()
 
 ```
 
-
 ### Summarise variables
 
-### Joining tables
+The functions we just saw are useful to manipulate a query data frames, and combined with the functions `group_by()` and `summarise()` can be really useful to avoid repetitive code.
 
-## Stringr: dealing with text
+The function `group_by()` creates a set of data frames filtered by the values of a factor of a given column. That may not sound very clear, so let's see it in acction.
 
-## Forcats: dealing with categorical variables
+```{r Group_by Example 1}
+# structure of the gapminder dataframe as is
+gapminder %>% str
+# structure of the gapmined dataframe grouped by continent
+gapminder %>% group_by(continent) %>% str
+```
+
+Note that the structure of the dataframe where we used `group_by()` is not the same as the original gapminder. The grouped_df can be though of a list of data frames, where each only contains the values of a given continent. We just saved some time by using one comand instead of filtering by continent 5 times.
+
+We can next execute functions on each of the tables saved in the grouped data frame. For this, we use the function `summarise()`, which applies the same function on each of the tables separately and shows the result. For example, if we want to know how many countries were recorded in each continent in the year 1960 we can do it using `summarise()` plus `n()`
+
+```{r Summarise Example 1}
+# Note that n() is called within summarise()
+gapminder %>% 
+  filter(year == 1990) %>% 
+  group_by(continent) %>% 
+  summarise(n_countries = n())
+```
+
+*Excercise:* You can also obtain summaries of numerical variables. Given that you now know how to create new variables in a data frame, create a new dataframe `gapminder_gdp`, calculate the GDP per capita of each country, and determine the mean gdp per capita of each continent in the year 1992
+```{r Summarise Excercise 2}
+
+```
+
+You can summarise multiple variables in a single call, separating them by a comma within `summarise()`. Also, you can continue applying functions to the output of `summarise()`. 
+
+*Excercise:* determine the difference between the minimum and the maximum life expectancy values of each countriy. Tip: try to obtain a table with the minimum and maximum of each country, once you have it, calculate the difference with one of the functions we've already seen.
+```{r}
+gapminder %>% group_by(country) %>% summarise(delta = max(life_expectancy))
+```
+
+We can combine multiple variables to be used by `group_by()`. If we were interested in seeing how the values per continents change with time, with can combine year and continent
+
+```{r Group_by Example 2}
+# Calculate the median infant mortality rate per continen per year
+gapminder %>% 
+  group_by(year, continent) %>% 
+  summarise(median_IM = median(infant_mortality, na.rm = T)) 
+
+# Sneak preview: plot median mortality by year
+
+gapminder %>% 
+  group_by(year, continent) %>% 
+  summarise(median_IM = median(infant_mortality, na.rm = T)) %>%
+  ggplot(aes(x = year, y = median_IM, color = continent)) +
+  geom_line()
+```
+
+```{r}
+gapminder %>% 
+  group_by(year, continent) %>% 
+  summarise(median_IM = median(infant_mortality, na.rm = T)) %>%
+  ggplot(aes(x = year, y = median_IM, color = continent)) +
+  geom_line()
+```
+
+
 
 # Good coding practices
 

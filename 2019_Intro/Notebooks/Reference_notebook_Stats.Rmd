@@ -30,15 +30,17 @@ This section is adapted from the *Descriptive Statistics and Graphics* of STHDA,
 
 First, let's load the tables we will use and explore their contents.
 ```{r Load gapminder}
-murders = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/Data/murders.tsv")
+murders = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/murders.tsv")
+```
+
+
+As you may already know, you can see the top of a table with the function `head()`, and we can see the structure of the dataset with the function `str()`. Let's visualize it to have a glimpse of our data.
+```{r Head}
+head(murders, n = 10)
 str(murders)
 ```
 
-```{r Head}
-head(murders, n = 10)
-```
-
-There are multiple R functions to describe the data:
+R contains multiple functions to describe the data. They all work in a very similar fashion: the name of the function describes the statistic you want to obtain, and the parameter it requires is a vector or column of data. Some of the most used are:
 
 * Mean:  `mean()`
 * Standard deviation:  `sd()`
@@ -50,6 +52,8 @@ There are multiple R functions to describe the data:
 * Sample quantiles:  `quantile()`
 * Generic function:  `summary()`
 * Interquartile range:   `IQR()`
+
+In the present session we will see how these functions work. This will be somewhat repetitive and not too exciting, but it is part of all statistical analyses and you have to learn the name of these functions, there is no other way arround it.
 
 ## Measures of central tendency: mean, median, mode
 ```{r Mean Example 1}
@@ -75,11 +79,6 @@ The median is calculated in a similar way
 median(murders$population)
 ```
 
-```{r Median Excercise}
-# Compute the median number of murders
-
-```
-
 ## Measures of variablity
 
 To determine the spread of the data, you can calculate the range, that is, the minimum and the maximum
@@ -93,3 +92,110 @@ If you want just one of those values, you can use the `min()` and `max()` functi
 ```{r Range Excercise}
 
 ```
+
+*Excercise:*  You may recall that the standard deviation equals the square root of the variance. Using the functions to compute the variance and the standard deviation of a sample (that you can find in the list above) obtain the standard deviation from the variance, and the variance from the standard deviation.
+```{r SD Excercise}
+
+```
+
+If you are dealing with data that don't distribute normally, it is better to use metrics that better accoun for the skewness. In this case, it is better to use the median and the interquartile range. 
+
+## Dealing with non-normal data
+
+*Excercise:* Obtain the median and interquartile range of both the state population and the number of murders. Compare these values with the mean and standard deviation.
+```{r Median Excercise}
+# Compute the median and iqr of number of murders
+
+# Compute the median and iqr the state population
+
+# Compute the mean and sd of number of murders
+
+# Compute the mean and sd the state population
+```
+
+## Other statistics
+
+You may also want to cut the distribution of your data in other points. If we were interested in determininig the value that divide the states by population in the top 10% and bottom 90%, we can use the `quantile()` function.
+
+```{r Example Quantile 1}
+quantile(murders$population, probs = 0.9)
+```
+It is also possible to calculate multiple values simultaneously, for example, if we wanted to obtain the top and bottom 10%, we pass a vector of probabilities to the function
+
+```{r Example Quantile 2}
+quantile(murders$population, probs = c(0.1, 0.9))
+```
+
+*Excercise:* Using the results of the last excercise, manually calculate the median and interquartile range of the number of murders and population using `quartile()`.
+```{r}
+
+```
+
+
+## Summarizing data
+
+While this is not very difficult, it can also be handy to obtain several of these statistics using a single function. For this we have `summary()`, which works just like all we just saw above, and which returns a vector we can save or index.
+
+```{r}
+# Summary of the number of murders and population 
+summary(murders$population)
+
+summary(murders$total)
+
+```
+
+## Aggregating data
+
+Now that we have covered the basics, we can do something a little more advanced. If you check again the structure of the murders data frame, you can see that there is a categorical variable (also called factor) which groups states by region. We may ask how do the values of murders and population vary per region. You could do it the long way, by subseting the dataframe by region and calculating every statistic on each dataframe, or you could use the `aggregate()` function, which does exactly that for you.
+
+Aggregate uses the formula notation of R, which works as follows: `y ~ x` and is read `y` *by* `x`. In the following example, we will calculate the mean population *by* region. You can also combine two categorical variables in your formula as follows: `y ~ x + z`
+
+```{r Example Aggregate 1}
+# Aggregate
+aggregate(total ~ region, data = murders, FUN = mean)
+```
+Note the other two parameters needed by the function: `data` tells the function where to look for the variables we are including in the formula, and `FUN` tells which function to calculate.
+
+If were to make a table for a paper with these information, we would also need the standard deviation. It would be just a matter of changing the parameter in `FUN`
+```{r Example Aggregate 2}
+# Aggregate
+aggregate(total ~ region, data = murders, FUN = sd)
+```
+
+*Excercise:* Calculate the range of murders by region
+```{r Excercise Aggregate }
+# Aggregate
+
+```
+
+## Tabulate data
+
+So far we have been doing summaries of continuous data, but we can also summarize categorical varaibles in R with a couple of handy functions.
+
+For the following examples, we will use `HairEyeColor`, a dataset included in R by default, so there is no need to load any file. This data set contains information of the frequency of  hair  and eye color by sex in a group of 592 students.
+
+First, we need to convert the data into a long data frame as follows:
+```{r Convert HairEyeColor}
+hair_eye_col = as.data.frame(HairEyeColor)
+HE_color = hair_eye_col[rep(row.names(hair_eye_col), hair_eye_col$Freq), 1:3]
+
+head(HE_color)
+```
+
+First, we can obtain tables of frecuencies (or counts) of each of the variables using the function `table()`
+```{r Example Table 1}
+table(HE_color$Hair)
+```
+
+*Excercise:* determine the number of students by sex and  by eye color (separately)
+```{r Excercise Table 1}
+# Table sex and age
+
+```
+
+We can also create contingency tables with the same function by passing two variables. For example, if we want to know the number of students by sex and eye color
+
+```{r Example Table 2}
+table(HE_color$Sex, HE_color$Eye)
+```
+
