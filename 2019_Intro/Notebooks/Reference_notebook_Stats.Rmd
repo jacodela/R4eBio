@@ -22,7 +22,7 @@ There are many good resources on the internet for learning both statistics and R
 
 ## Libraries
 ```{r Load Libraries}
-
+library(skimr)
 ```
 
 # Summary statistics
@@ -54,6 +54,22 @@ R contains multiple functions to describe the data. They all work in a very simi
 * Interquartile range:   `IQR()`
 
 In the present session we will see how these functions work. This will be somewhat repetitive and not too exciting, but it is part of all statistical analyses and you have to learn the name of these functions, there is no other way arround it.
+
+## Shape of the data
+
+One of the first things to know is how many rows and columns our data has. You already got a summary with the `str()` command, but there are ways of getting this information as variables. 
+
+```{r}
+# Dimension
+dim(murders)
+
+# Number of rows
+nrow(murders)
+
+# Number of columns
+ncol(murders)
+```
+
 
 ## Measures of central tendency: mean, median, mode
 ```{r Mean Example 1}
@@ -224,9 +240,33 @@ Finally, you can obtain a table of proportions using the `prop.table()` function
 prop.table(HE_table)
 ```
 
-*Excercise:* Determine whether `prop.table()` uses rows or columns totals to calculate the proportions. Now compute a proportion table in the oposite sense (i.e. if defaults if rows use columns, or if the default is columns, use rows); very it.
+*Excercise:* Determine whether `prop.table()` uses rows or columns totals to calculate the proportions. Now compute a proportion table in the oposite sense (i.e. if defaults if rows use columns, or if the default is columns, use rows); verify it.
 
 ```{r Excercise Proptable}
+
+```
+
+## Extra: summaries with Skimr
+
+There is a very convinient R package called `skimr`, which can create summary statistics of a table. We'll se its main function. Remember first to load the package at the top of the notebook.
+
+To generate summaries of a complete data frame, you use the function `skim()`
+
+```{r Example Skim}
+skim(murders)
+```
+
+*Excercise:* Explore the output table. How are the variables separated? What values does the function provide? For each of the values, remember the function of base R used to calculate it.
+
+```{r Excercise Skimr 1}
+
+```
+
+This looks pretty, but may be difficult to use in downstream analyses. To obtain a more R friendly table, the package also provides a funtion called `skim_to_wide()`, which returns a regular data frame.
+
+*Excercise:* create a wide summary of the `murders` data frame. How is it different to the original skim summary?
+
+```{r Excercise Skimr 2}
 
 ```
 

@@ -89,17 +89,17 @@ First, let's load the tables we will use and explore their contents.
 
 ```{r Load gapminder}
 gapminder = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/gapminder.tsv")
-gapminder %>% glimpse
+gapminder %>% str
 ```
 
 ```{r Load polls}
 polls = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/polls_us_election_2016.tsv")
-polls %>% glimpse
+polls %>% str
 ```
 
 ```{r Load murders}
 murders = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/murders.tsv")
-murders %>% glimpse
+murders %>% str
 ```
 
 ### Filtering tables
@@ -169,7 +169,7 @@ We don't always need all the data in a table, and we wish to use a few columns. 
 For this section, we'll use the `polls` data frame. First, let's see the structure the table again
 
 ```{r Select Example 1}
-polls %>% glimpse
+polls %>% str
 ```
 
 If you want to select a single column, you just pass its name to the function. For example, if you want the sample sizes of the polls
