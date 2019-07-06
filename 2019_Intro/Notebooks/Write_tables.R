@@ -11,7 +11,7 @@ data("heights") # Self-reported heights in inches for males and females
 data("divorce_margarine") # Spurious correlation data
 data("ukbabynames") # Spurious correlation data
 # Save tables
-tables_dir = "PATH_TO_FOLDER/"
+tables_dir = "PATH"
 
 murders %>% write.table(. , file = file.path(tables_dir, "murders.tsv"), 
                         sep = '\t', dec = ".", row.names = F, quote = F)
@@ -31,5 +31,7 @@ heights %>% write.table(. , file = file.path(tables_dir, "heights.tsv"),
 divorce_margarine %>% write.table(. , file = file.path(tables_dir, "divorce_margarine.tsv"), 
                                   sep = '\t', dec = ".", row.names = F, quote = F)
 
-ukbabynames %>% write.table(. , file = file.path(tables_dir, "ukbabynames.tsv"), 
-                                  sep = '\t', dec = ".", row.names = F, quote = F)
+ukbabynames %>% 
+  mutate(sex = case_when(sex == F ~ "Female", T ~ "Male")) %>% 
+  write.table(. , file = file.path(tables_dir, "ukbabynames.tsv"), 
+              sep = '\t', dec = ".", row.names = F, quote = F)

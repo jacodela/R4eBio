@@ -84,7 +84,7 @@ n_pop = length(murders$population)
 pop_sum/n_pop
 ```
 
-```{r Mean exercise}
+```{r Mean Exercise}
 # Compute the mean number of murders
 
 ```
@@ -105,12 +105,12 @@ range(murders$population)
 If you want just one of those values, you can use the `min()` and `max()` functions. 
 
 *exercise:* Obtain the minimum and the maximum number of murders, create a vector with these values, and compare it with the result you get from the `range()` function
-```{r Range exercise}
+```{r Range Exercise}
 
 ```
 
 *exercise:*  You may recall that the standard deviation equals the square root of the variance. Using the functions to compute the variance and the standard deviation of a sample (that you can find in the list above) obtain the standard deviation from the variance, and the variance from the standard deviation.
-```{r SD exercise}
+```{r SD Exercise}
 
 ```
 
@@ -119,7 +119,7 @@ If you are dealing with data that don't distribute normally, it is better to use
 ## Dealing with non-normal data
 
 *exercise:* Obtain the median and interquartile range of both the state population and the number of murders. Compare these values with the mean and standard deviation.
-```{r Median exercise}
+```{r Median Exercise}
 # Compute the median and iqr of number of murders
 
 # Compute the median and iqr the state population
@@ -143,7 +143,7 @@ quantile(murders$population, probs = c(0.1, 0.9))
 ```
 
 *exercise:* Using the results of the last exercise, manually calculate the median and interquartile range of the number of murders and population using `quartile()`.
-```{r}
+```{r Exercise Quantile 3}
 
 ```
 
@@ -152,7 +152,7 @@ quantile(murders$population, probs = c(0.1, 0.9))
 
 While this is not very difficult, it can also be handy to obtain several of these statistics using a single function. For this we have `summary()`, which works just like all we just saw above, and which returns a vector we can save or index.
 
-```{r}
+```{r Example Summary}
 # Summary of the number of murders and population 
 summary(murders$population)
 
@@ -179,7 +179,7 @@ aggregate(total ~ region, data = murders, FUN = sd)
 ```
 
 *exercise:* Calculate the range of murders by region
-```{r exercise Aggregate }
+```{r Exercise Aggregate }
 # Aggregate
 
 ```

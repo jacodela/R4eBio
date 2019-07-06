@@ -19,7 +19,7 @@ The present notebook contains excercises about basic data wrangling using the ti
 ### Question 1
 
 Format the following text to make it look like in the picture
-![](MODIFY THIS PATH/2019_Data_Wrangling/2019_Intro/Data/Example_Markdown.png)
+![](https://raw.githubusercontent.com/jacodela/R4eBio/master/2019_Intro/Data/Example_Markdown.png)
 
 Nonlinear phenotypic variation uncovers the emergence of heterosis in Arabidopsis thaliana
 François Vasseur, Louise Fouqueau, Dominique de Vienne, Thibault Nidelet, Cyrille Violle and Detlef Weigel
@@ -41,3 +41,47 @@ References
 Fu D, Xiao M, Hayward A, Jiang G, Zhu L, Zhou Q, et al. What is crop heterosis: new insights into an old topic. J Appl Genet. 2015;56: 1–13. pmid: 25027629
 Crow JF. 90 years ago: the beginning of hybrid maize. Genetics. 1998;148: 923–928. pmid: 9539413
 Jones DF. Dominance of linked factors as a means of accounting for heterosis. Proc Natl Acad Sci U S A. 1917; 3(4): 310–312. pmid: 16586724
+
+## Summary statistics
+
+For this section, you will use the `diamonds` data set that comes with the library `ggplot2`; it contains the prices and other attributes of almost several thousand diamonds.
+
+
+Just run the following chunk of code. Write each answer in its own chunk of code
+
+```{r Load}
+library(ggplot2)
+diamonds
+```
+
+### Question 2
+
+How many entries does the data set has? How many variables are there? What are the classes of the variables?
+
+### Question 3
+
+What is the average price of a diamond? How much does the price deviate from the average value?
+
+### Question 4
+
+What is the minimum and maximum caratage of the diamonds in the data set? Determine this in two different  ways
+
+### Question 5
+
+How many diamonds are classified as "Ideal"? How many as "Fair"?
+
+### Question 6
+
+What color of diamond is the most expensive? What is the median value of the most expensive color?
+
+### Question 7
+
+What is the difference between the 99th percentile "Ideal" diamond and the 99th percentile "Very Good" diamond?
+
+### Question 8
+
+How many "Premium" diamonds have color "H"?
+
+### Question 9 
+
+Create a table of cut and clarity. Of all the IF diamonds, what is the proportion classified as "Fair"? Of all the "Ideal" diamonds, what is the proportion classified as "I1"?
