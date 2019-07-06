@@ -36,8 +36,7 @@ murders = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data
 
 As you may already know, you can see the top of a table with the function `head()`, and we can see the structure of the dataset with the function `str()`. Let's visualize it to have a glimpse of our data.
 ```{r Head}
-head(murders, n = 10)
-str(murders)
+
 ```
 
 R contains multiple functions to describe the data. They all work in a very similar fashion: the name of the function describes the statistic you want to obtain, and the parameter it requires is a vector or column of data. Some of the most used are:
@@ -61,27 +60,23 @@ One of the first things to know is how many rows and columns our data has. You a
 
 ```{r}
 # Dimension
-dim(murders)
 
 # Number of rows
-nrow(murders)
 
 # Number of columns
-ncol(murders)
+
 ```
 
 
 ## Measures of central tendency: mean, median, mode
 ```{r Mean Example 1}
 # Compute the mean of the population
-mean(murders$population)
+
 ```
 
 We can verify the result calculating the mean 'manually'
 ```{r Mean Example 2}
-pop_sum = sum(murders$population)
-n_pop = length(murders$population)
-pop_sum/n_pop
+
 ```
 
 ```{r Mean Exercise}
@@ -92,14 +87,14 @@ pop_sum/n_pop
 The median is calculated in a similar way
 ```{r Median Example}
 # Compute the median population
-median(murders$population)
+
 ```
 
 ## Measures of variablity
 
 To determine the spread of the data, you can calculate the range, that is, the minimum and the maximum
 ```{r Range Example}
-range(murders$population)
+
 ```
 
 If you want just one of those values, you can use the `min()` and `max()` functions. 
@@ -154,9 +149,6 @@ While this is not very difficult, it can also be handy to obtain several of thes
 
 ```{r Example Summary}
 # Summary of the number of murders and population 
-summary(murders$population)
-
-summary(murders$total)
 
 ```
 
@@ -175,7 +167,7 @@ Note the other two parameters needed by the function: `data` tells the function 
 If were to make a table for a paper with these information, we would also need the standard deviation. It would be just a matter of changing the parameter in `FUN`
 ```{r Example Aggregate 2}
 # Aggregate
-aggregate(total ~ region, data = murders, FUN = sd)
+
 ```
 
 *exercise:* Calculate the range of murders by region
@@ -201,9 +193,9 @@ head(HE_color)
 First, we can obtain tables of frecuencies (or counts) of each of the variables using the function `table()`
 ```{r Example Table 1}
 # Table
-table(HE_color$Hair)
+
 # Convert to data frame
-as.data.frame(table(HE_color$Hair))
+
 ```
 
 *exercise:* determine the number of students by sex and  by eye color (separately)
@@ -215,29 +207,29 @@ as.data.frame(table(HE_color$Hair))
 We can also create contingency tables with the same function by passing two variables. For example, if we want to know the number of students by sex and eye color
 
 ```{r Example Table 2}
-table(HE_color$Sex, HE_color$Eye)
+
 ```
 
-To create tables according to multiple categorical variables, you can use `ftable()`, which takes as input a formula of the form `Cat1 + Cat2 ~ Cont`
+To create tables according to multiple categorical variables, you can use `ftable()`, which takes as input a formula of the form `Cat1 + Cat2 ~ Cont`. 
 ```{r Example Ftable}
-ftable(Sex + Hair ~ Eye, data = HE_color)
+# ftable 
+
 ```
 
 You can use functions to get information from table objects. For example, if you are interested in the margin sums of a table, you can use the `margin.table()` function
 ```{r Example Margintable}
 # Table of Eye and Hair color
-HE_table =  table(HE_color$Hair, HE_color$Eye)
-HE_table
+
 # Margin 1 means by rows  
-margin.table(HE_table, margin = 1) 
+
 
 # Margin 2 means by columns
-margin.table(HE_table, margin = 2)
+
 ```
 
 Finally, you can obtain a table of proportions using the `prop.table()` function. You should also specify whether 
 ```{r Example Proptable}
-prop.table(HE_table)
+
 ```
 
 *exercise:* Determine whether `prop.table()` uses rows or columns totals to calculate the proportions. Now compute a proportion table in the oposite sense (i.e. if defaults if rows use columns, or if the default is columns, use rows); verify it.
@@ -253,7 +245,7 @@ There is a very convinient R package called `skimr`, which can create summary st
 To generate summaries of a complete data frame, you use the function `skim()`
 
 ```{r Example Skim}
-skim(murders)
+
 ```
 
 *exercise:* Explore the output table. How are the variables separated? What values does the function provide? For each of the values, remember the function of base R used to calculate it.
