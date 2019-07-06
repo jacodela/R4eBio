@@ -36,8 +36,7 @@ murders = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data
 
 As you may already know, you can see the top of a table with the function `head()`, and we can see the structure of the dataset with the function `str()`. Let's visualize it to have a glimpse of our data.
 ```{r Head}
-head(murders, n = 10)
-str(murders)
+
 ```
 
 R contains multiple functions to describe the data. They all work in a very similar fashion: the name of the function describes the statistic you want to obtain, and the parameter it requires is a vector or column of data. Some of the most used are:
@@ -59,47 +58,44 @@ In the present session we will see how these functions work. This will be somewh
 
 One of the first things to know is how many rows and columns our data has. You already got a summary with the `str()` command, but there are ways of getting this information as variables. 
 
-```{r}
+```{r ExampleShape}
 # Dimension
-dim(murders)
 
 # Number of rows
-nrow(murders)
 
 # Number of columns
-ncol(murders)
+
 ```
 
 
 ## Measures of central tendency: mean, median, mode
 ```{r Mean Example 1}
 # Compute the mean of the population
-mean(murders$population)
+
 ```
 
 We can verify the result calculating the mean 'manually'
 ```{r Mean Example 2}
-pop_sum = sum(murders$population)
-n_pop = length(murders$population)
-pop_sum/n_pop
+
 ```
 
+*Excercise:* calculate the mean number of murders
 ```{r Mean Exercise}
-# Compute the mean number of murders
+
 
 ```
 
 The median is calculated in a similar way
 ```{r Median Example}
-# Compute the median population
-median(murders$population)
+# calculate the median population
+
 ```
 
 ## Measures of variablity
 
 To determine the spread of the data, you can calculate the range, that is, the minimum and the maximum
 ```{r Range Example}
-range(murders$population)
+
 ```
 
 If you want just one of those values, you can use the `min()` and `max()` functions. 
@@ -134,12 +130,12 @@ If you are dealing with data that don't distribute normally, it is better to use
 You may also want to cut the distribution of your data in other points. If we were interested in determininig the value that divide the states by population in the top 10% and bottom 90%, we can use the `quantile()` function.
 
 ```{r Example Quantile 1}
-quantile(murders$population, probs = 0.9)
-```
-It is also possible to calculate multiple values simultaneously, for example, if we wanted to obtain the top and bottom 10%, we pass a vector of probabilities to the function
 
+```
+
+It is also possible to calculate multiple values simultaneously, for example, if we wanted to obtain the top and bottom 10%, we pass a vector of probabilities to the function
 ```{r Example Quantile 2}
-quantile(murders$population, probs = c(0.1, 0.9))
+
 ```
 
 *exercise:* Using the results of the last exercise, manually calculate the median and interquartile range of the number of murders and population using `quartile()`.
@@ -154,9 +150,6 @@ While this is not very difficult, it can also be handy to obtain several of thes
 
 ```{r Example Summary}
 # Summary of the number of murders and population 
-summary(murders$population)
-
-summary(murders$total)
 
 ```
 
@@ -168,14 +161,14 @@ Aggregate uses the formula notation of R, which works as follows: `y ~ x` and is
 
 ```{r Example Aggregate 1}
 # Aggregate
-aggregate(total ~ region, data = murders, FUN = mean)
+
 ```
 Note the other two parameters needed by the function: `data` tells the function where to look for the variables we are including in the formula, and `FUN` tells which function to calculate.
 
 If were to make a table for a paper with these information, we would also need the standard deviation. It would be just a matter of changing the parameter in `FUN`
 ```{r Example Aggregate 2}
 # Aggregate
-aggregate(total ~ region, data = murders, FUN = sd)
+
 ```
 
 *exercise:* Calculate the range of murders by region
@@ -194,16 +187,13 @@ First, we need to convert the data into a long data frame as follows:
 ```{r Convert HairEyeColor}
 hair_eye_col = as.data.frame(HairEyeColor)
 HE_color = hair_eye_col[rep(row.names(hair_eye_col), hair_eye_col$Freq), 1:3]
-
 head(HE_color)
 ```
 
 First, we can obtain tables of frecuencies (or counts) of each of the variables using the function `table()`
 ```{r Example Table 1}
 # Table
-table(HE_color$Hair)
 # Convert to data frame
-as.data.frame(table(HE_color$Hair))
 ```
 
 *exercise:* determine the number of students by sex and  by eye color (separately)
@@ -215,29 +205,28 @@ as.data.frame(table(HE_color$Hair))
 We can also create contingency tables with the same function by passing two variables. For example, if we want to know the number of students by sex and eye color
 
 ```{r Example Table 2}
-table(HE_color$Sex, HE_color$Eye)
+
 ```
 
 To create tables according to multiple categorical variables, you can use `ftable()`, which takes as input a formula of the form `Cat1 + Cat2 ~ Cont`
 ```{r Example Ftable}
-ftable(Sex + Hair ~ Eye, data = HE_color)
+
 ```
 
 You can use functions to get information from table objects. For example, if you are interested in the margin sums of a table, you can use the `margin.table()` function
 ```{r Example Margintable}
 # Table of Eye and Hair color
-HE_table =  table(HE_color$Hair, HE_color$Eye)
-HE_table
+
 # Margin 1 means by rows  
-margin.table(HE_table, margin = 1) 
+
 
 # Margin 2 means by columns
-margin.table(HE_table, margin = 2)
+
 ```
 
 Finally, you can obtain a table of proportions using the `prop.table()` function. You should also specify whether 
 ```{r Example Proptable}
-prop.table(HE_table)
+
 ```
 
 *exercise:* Determine whether `prop.table()` uses rows or columns totals to calculate the proportions. Now compute a proportion table in the oposite sense (i.e. if defaults if rows use columns, or if the default is columns, use rows); verify it.
@@ -253,7 +242,7 @@ There is a very convinient R package called `skimr`, which can create summary st
 To generate summaries of a complete data frame, you use the function `skim()`
 
 ```{r Example Skim}
-skim(murders)
+
 ```
 
 *exercise:* Explore the output table. How are the variables separated? What values does the function provide? For each of the values, remember the function of base R used to calculate it.
