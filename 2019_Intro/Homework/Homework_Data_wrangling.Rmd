@@ -1,0 +1,130 @@
+---
+title: "Homework - Data wrangling and tidying with the tidyverse"
+output: html_notebook
+---
+
+# Introduction
+Jacobo de la Cuesta-Zuluaga. July 2019.
+
+The present notebook contains excercises about basic data wrangling using the tidyverse. It is base on the material of Lisa DeBruine and Dale Barr's [MSC Data Skills course](https://psyteachr.github.io/msc-data-skills/)
+
+## Load data and libraries
+
+For the excercises you will use a data table we haven't used before, the UK baby names data set. It is located in the same folder as the ones we used in class.
+
+Load the file and call it `ukbabynames`
+```{r}
+ukbabynames = NULL
+```
+
+Load the libraries
+```{r}
+
+```
+
+## Questions
+
+### Question 1
+
+What is the number of entries in the data set? There are several ways of doing this, but the answer in this case should be a single number saved in a variable
+
+```{r Q1}
+n_entries = NULL
+```
+
+### Question 2
+
+Create a table with the names and the ranks of the babies born in 1999
+
+```{r Q2}
+name_ranks = NULL
+```
+
+### Question 3
+
+What is the range of birth years contained in the dataset? Use `summarise` to make a table with two columns: `minyear` and `maxyear`.
+
+```{r Q3}
+birth_range = NULL
+```
+
+### Question 4
+
+Make a table of only the data from babies named Hermione. When was it most popular?
+
+```{r Q4}
+hermiones = NULL
+```
+
+### Question 5
+
+Sort the dataset by sex and then by year (descending) and then by rank (descending).
+
+```{r Q5}
+sorted_babies = NULL
+```
+
+### Question 6
+
+Create a new column, `decade`, that contains the decade of birth (1990, 2000, 2010). This one is tricky, be creative! Hint: see `?floor` or `?round`
+
+```{r Q6}
+ukb_decade = NULL
+```
+
+### Question 7
+
+Make a table of only the data from male babies named Courtney that were born between 1998 and 2001 (inclusive).
+
+```{r Q7}
+courtney = NULL
+```
+
+
+### Question 8
+
+How many distinct names are represented in the dataset? Make sure `distinct_names` is an integer, not a data table. Hint: see `?n_distinct` and note it takes a vector of values as input.
+
+```{r Q8}
+distinct_names = NULL
+```
+
+### Question 9
+
+Make a table of only the data from the female babies named Frankie that were born before 1999 or after 2010.
+
+```{r Q9}
+frankie = NULL
+```
+
+### Question 10
+
+How many total babies in the dataset were named 'Emily'? Make sure `emily` is an integer, not a data table.
+
+```{r Q10}
+emily = NULL
+```
+
+### Question 11
+
+How many distinct names are there for each sex? Hint: this need a function you just learned about.
+
+```{r Q11}
+names_per_sex = NULL
+```
+
+### Question 12
+
+What is the most popular name in the dataset? A simple call to `arrange()` won't be enough!
+
+```{r Q12}
+most_popular = NULL
+```
+
+### Question 13
+
+How many babies were born each year for each sex?
+
+```{r Q13}
+babies_per_year = NULL
+```
