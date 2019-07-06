@@ -3,9 +3,24 @@ title: "Intro to Markdown"
 output: html_notebook
 ---
 
-Jacobo de la Cuesta-Zuluaga. July 2019.
+# Intro
+Jacobo de la Cuesta-Zuluaga. July 2019. This notebook contains the code and exercises used in the session *Intro to RMarkdown*, tutored by Jacobo de la Cuesta-Zuluaga as part of the R for Bioscientists 2019 summer course at the Max-Planck Institute for Developmental Biology.
 
-****
+## Before we begin
+
+There are many good resources on the internet for learning both statistics and R (or both combined!). Don't ever be afraid or ashamed of googling things, this is a skill on its own, and mastering it will help you a lot. Here are some resources that may be of help:
+
+  * https://www.datacamp.com/ : free and paid interactive data analysis and R courses
+  * http://www.sthda.com/ : large ammount of tutorials for any kind of analyses and graph generation in R
+  * https://www.statmethods.net/index.html : short and clear explanation of R functions
+  * https://stats.stackexchange.com/ : forum where people ask and answer all kind of statistics-related questions.
+  * https://stackoverflow.com/ : similar to StatsExchange, but for programming-related questions. You will get to love this site, seriously. If you want to do anything in R (or any other programming language), or you keep bumping into an error, just google it; most likely someone has already asked that question in StackOverflow and you will likely get one (or more) answers.
+  * https://www.r-bloggers.com/ : an aggregator of people bloging various R stuff. You can search for tutorials, news, opinions and other R-related things.
+  * http://jef.works/R-style-guide/ : Best practices for readable, sharable, and verifiable R code
+  
+You can also use https://rseek.org/, which is a search engine optimized to return results to R-related queries.
+
+# Markdown
 
 Markdown is a way of formating or styling text from plain form to HTML. You can use to write reproducible, dynamic reports that combine text, images and code. These reports can be then exported as pdf, doc or html files.
 
@@ -110,24 +125,24 @@ To insert a code chunk, use the shortcut `Ctrl+Alt+I` or `Command+Option+I`
 
 ```{r}
 # Hello world
-print("Hello world")
+
 ```
 
 You can create a variable in one chunk...
 ```{r}
 # create my_var
-my_var = 22/7
+
 ```
 
 ... and print it in another
 ```{r}
 # print my_var
-my_var
+
 ```
 
 They can also display tables in a very convinient way
 ```{r}
-head(mtcars)
+# Head of mtcars
 ```
 
 You can name your code chunks for easier reference
