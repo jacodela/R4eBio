@@ -295,8 +295,6 @@ We can combine multiple variables to be used by `group_by()`. If we were interes
 
 ```
 
-# Good coding practices
-
 # Session info
 
 For reproducibility, it is good to add a line that shows the libraries and the versions we used in our analyses.
