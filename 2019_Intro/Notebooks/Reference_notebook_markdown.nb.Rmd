@@ -3,6 +3,10 @@ title: "Intro to Markdown"
 output: html_notebook
 ---
 
+Jacobo de la Cuesta-Zuluaga. July 2019.
+
+****
+
 Markdown is a way of formating or styling text from plain form to HTML. You can use to write reproducible, dynamic reports that combine text, images and code. These reports can be then exported as pdf, doc or html files.
 
 ****

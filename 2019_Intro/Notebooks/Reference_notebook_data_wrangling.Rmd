@@ -31,7 +31,7 @@ You can find more `tidyverse` tutorials and slides here:
 
 # Data Wrangling and tidying
 
-Something about organizing tables and dealing with messy data
+Data organization, also called data wrangling, is vital for the data analysis. It lays between data data acquisition and exploratory data analysis, and anyone wishing to do any kind of analysis needs to have this skill. You may even hear from time to time that data wrangling can take more time than the analysis itself. This may not always be true, but what is sure is that knowing how to handle your data will make your life easier down the line.
 
 ## Libraries
 Remember to load all the libraries you are going to use at the top of your code.
@@ -59,14 +59,14 @@ nest_sum = sum(pipe_vector)
 pipe_sum = c(1,2,3,4) %>% sum()
 ```
 
-```{r Pipe Excercise 1}
+```{r Pipe Exercise 1}
 # Check that pipe_vector and pipe_sum are the exact same value
 ```
 
 The shortcut for the pipe operator is **ctrl (cmd in mac) + shift + m**
 
-*Excercise:* Say you have a vector of numbers, and you want to obtain the LogSumExp (LSE) function rounded to 2 decimals. How would you do it using the pipe notation?
-```{r Pipe Excercise 2}
+*Exercise:* Say you have a vector of numbers, and you want to obtain the LogSumExp (LSE) function rounded to 2 decimals. How would you do it using the pipe notation?
+```{r Pipe Exercise 2}
 # Hint: remember that nested expresions are read from the inside out
 LSE_vector = c(57.4575944579037, 57.3494891723124, 64.7442112250003, 
                33.5612519726716, 50.3621377196813, 64.5753329324498, 
@@ -137,8 +137,8 @@ gapminder_80s %>% head()
 ```
 
 
-*Excercise:* filter the gapminder data to determine the population of your country of origin in the year you were born. Compare that to the population of the year 2015.
-```{r Filter Excercise 1}
+*Exercise:* filter the gapminder data to determine the population of your country of origin in the year you were born. Compare that to the population of the year 2015.
+```{r Filter Exercise 1}
 
 ```
 
@@ -160,8 +160,8 @@ gapminder_multifilter_2
 ```
 Note that the order in which you create the filters is very important.
 
-*Excercise:* Would the resulting table be the same if you switched the order of the filters (i.e. first by median fertility, and then by region and year)? Why or why not? Try it yourself and compare the resulting tables
-```{r Filter Excercise 2}
+*Exercise:* Would the resulting table be the same if you switched the order of the filters (i.e. first by median fertility, and then by region and year)? Why or why not? Try it yourself and compare the resulting tables
+```{r Filter Exercise 2}
 gapminder_multifilter_3 = gapminder %>%
   filter(fertility < median(fertility, na.rm = T))%>% 
   filter(region %in% c("South America", "Caribbean") & year == 1970)
@@ -192,8 +192,8 @@ grade_state = polls %>% select(pollster, grade, state)
 grade_state %>% head
 ```
 
-*Excercise:* create a table with the data of the U.S. state and the dates each was polled.
-```{r Select Excercise 1}
+*Exercise:* create a table with the data of the U.S. state and the dates each was polled.
+```{r Select Exercise 1}
 
 ```
 
@@ -228,8 +228,8 @@ poll_multiselect_2 = polls %>%
 poll_multiselect_2 %>%  head()
 ```
 
-*Excercise:* Create and print a table with the pollsters, the dates of the polls, the sample size and the raw information of all the candidates that are not Trump or Clinton.
-```{r Select Excercise 2}
+*Exercise:* Create and print a table with the pollsters, the dates of the polls, the sample size and the raw information of all the candidates that are not Trump or Clinton.
+```{r Select Exercise 2}
 
 ```
 
@@ -243,8 +243,8 @@ starting_dates = polls %>%
 starting_dates[1:10]
 ```
 
-*Excercise:* try to pull two columns at the same time
-```{r Pull Excercise 1}
+*Exercise:* try to pull two columns at the same time
+```{r Pull Exercise 1}
 
 ```
 
@@ -271,8 +271,8 @@ states_murder_region = murders %>% arrange(region, -total)
 states_murder_region
 ```
 
-*Excercise*: Does the order of the parameters affect the result? Try it arranging the table by population and region
-```{r Arrange Excercise 1}
+*Exercise*: Does the order of the parameters affect the result? Try it arranging the table by population and region
+```{r Arrange Exercise 1}
 murders %>% arrange(region, population)
 ```
 
@@ -289,14 +289,14 @@ murders_log %>% head()
 ```
 
 
-*Excercise:* The total deaths as provided are not very informative, it would be better to have a relative measure. Create a new variable in which you store the number of murders by 100.000 inhabitants on each state
-```{r Mutate Excercise 1}
+*Exercise:* The total deaths as provided are not very informative, it would be better to have a relative measure. Create a new variable in which you store the number of murders by 100.000 inhabitants on each state
+```{r Mutate Exercise 1}
 murders_rate = murders %>% mutate(rate = total/(population/100000))
 murders_rate %>% head()
 ```
 
-*Excercise:* Is the top 10 ranking of most dangerous US states the same if you do calculate it using the total or the rate? Compare both
-```{r Mutate Excercise 2}
+*Exercise:* Is the top 10 ranking of most dangerous US states the same if you do calculate it using the total or the rate? Compare both
+```{r Mutate Exercise 2}
 
 ```
 
@@ -325,14 +325,14 @@ gapminder %>%
   summarise(n_countries = n())
 ```
 
-*Excercise:* You can also obtain summaries of numerical variables. Given that you now know how to create new variables in a data frame, create a new dataframe `gapminder_gdp`, calculate the GDP per capita of each country, and determine the mean gdp per capita of each continent in the year 1992
-```{r Summarise Excercise 1}
+*Exercise:* You can also obtain summaries of numerical variables. Given that you now know how to create new variables in a data frame, create a new dataframe `gapminder_gdp`, calculate the GDP per capita of each country, and determine the mean gdp per capita of each continent in the year 1992
+```{r Summarise Exercise 1}
 
 ```
 
 You can summarise multiple variables in a single call, separating them by a comma within `summarise()`. Also, you can continue applying functions to the output of `summarise()`. 
 
-*Excercise:* determine the difference between the minimum and the maximum life expectancy values of each countriy. Tip: try to obtain a table with the minimum and maximum of each country, once you have it, calculate the difference with one of the functions we've already seen.
+*Exercise:* determine the difference between the minimum and the maximum life expectancy values of each countriy. Tip: try to obtain a table with the minimum and maximum of each country, once you have it, calculate the difference with one of the functions we've already seen.
 ```{r Group_by Example 2}
 gapminder %>% group_by(country) %>% summarise(delta = max(life_expectancy))
 ```

@@ -6,11 +6,11 @@ output: html_notebook
 # Introduction
 Jacobo de la Cuesta-Zuluaga. July 2019.
 
-The present notebook contains excercises about basic data wrangling using the tidyverse. It is base on the material of Lisa DeBruine and Dale Barr's [MSC Data Skills course](https://psyteachr.github.io/msc-data-skills/)
+The present notebook contains exercises about basic data wrangling using the tidyverse. It is base on the material of Lisa DeBruine and Dale Barr's [MSC Data Skills course](https://psyteachr.github.io/msc-data-skills/)
 
 ## Load data and libraries
 
-For the excercises you will use a data table we haven't used before, the UK baby names data set. It is located in the same folder as the ones we used in class.
+For the exercises you will use a data table we haven't used before, the UK baby names data set. It is located in the same folder as the ones we used in class.
 
 Load the file and call it `ukbabynames`
 ```{r}

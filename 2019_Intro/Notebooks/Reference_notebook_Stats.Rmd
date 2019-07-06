@@ -84,7 +84,7 @@ n_pop = length(murders$population)
 pop_sum/n_pop
 ```
 
-```{r Mean Excercise}
+```{r Mean exercise}
 # Compute the mean number of murders
 
 ```
@@ -104,13 +104,13 @@ range(murders$population)
 
 If you want just one of those values, you can use the `min()` and `max()` functions. 
 
-*Excercise:* Obtain the minimum and the maximum number of murders, create a vector with these values, and compare it with the result you get from the `range()` function
-```{r Range Excercise}
+*exercise:* Obtain the minimum and the maximum number of murders, create a vector with these values, and compare it with the result you get from the `range()` function
+```{r Range exercise}
 
 ```
 
-*Excercise:*  You may recall that the standard deviation equals the square root of the variance. Using the functions to compute the variance and the standard deviation of a sample (that you can find in the list above) obtain the standard deviation from the variance, and the variance from the standard deviation.
-```{r SD Excercise}
+*exercise:*  You may recall that the standard deviation equals the square root of the variance. Using the functions to compute the variance and the standard deviation of a sample (that you can find in the list above) obtain the standard deviation from the variance, and the variance from the standard deviation.
+```{r SD exercise}
 
 ```
 
@@ -118,8 +118,8 @@ If you are dealing with data that don't distribute normally, it is better to use
 
 ## Dealing with non-normal data
 
-*Excercise:* Obtain the median and interquartile range of both the state population and the number of murders. Compare these values with the mean and standard deviation.
-```{r Median Excercise}
+*exercise:* Obtain the median and interquartile range of both the state population and the number of murders. Compare these values with the mean and standard deviation.
+```{r Median exercise}
 # Compute the median and iqr of number of murders
 
 # Compute the median and iqr the state population
@@ -142,7 +142,7 @@ It is also possible to calculate multiple values simultaneously, for example, if
 quantile(murders$population, probs = c(0.1, 0.9))
 ```
 
-*Excercise:* Using the results of the last excercise, manually calculate the median and interquartile range of the number of murders and population using `quartile()`.
+*exercise:* Using the results of the last exercise, manually calculate the median and interquartile range of the number of murders and population using `quartile()`.
 ```{r}
 
 ```
@@ -178,8 +178,8 @@ If were to make a table for a paper with these information, we would also need t
 aggregate(total ~ region, data = murders, FUN = sd)
 ```
 
-*Excercise:* Calculate the range of murders by region
-```{r Excercise Aggregate }
+*exercise:* Calculate the range of murders by region
+```{r exercise Aggregate }
 # Aggregate
 
 ```
@@ -206,8 +206,8 @@ table(HE_color$Hair)
 as.data.frame(table(HE_color$Hair))
 ```
 
-*Excercise:* determine the number of students by sex and  by eye color (separately)
-```{r Excercise Table 1}
+*exercise:* determine the number of students by sex and  by eye color (separately)
+```{r exercise Table 1}
 # Table sex and age
 
 ```
@@ -240,9 +240,9 @@ Finally, you can obtain a table of proportions using the `prop.table()` function
 prop.table(HE_table)
 ```
 
-*Excercise:* Determine whether `prop.table()` uses rows or columns totals to calculate the proportions. Now compute a proportion table in the oposite sense (i.e. if defaults if rows use columns, or if the default is columns, use rows); verify it.
+*exercise:* Determine whether `prop.table()` uses rows or columns totals to calculate the proportions. Now compute a proportion table in the oposite sense (i.e. if defaults if rows use columns, or if the default is columns, use rows); verify it.
 
-```{r Excercise Proptable}
+```{r exercise Proptable}
 
 ```
 
@@ -256,17 +256,17 @@ To generate summaries of a complete data frame, you use the function `skim()`
 skim(murders)
 ```
 
-*Excercise:* Explore the output table. How are the variables separated? What values does the function provide? For each of the values, remember the function of base R used to calculate it.
+*exercise:* Explore the output table. How are the variables separated? What values does the function provide? For each of the values, remember the function of base R used to calculate it.
 
-```{r Excercise Skimr 1}
+```{r exercise Skimr 1}
 
 ```
 
 This looks pretty, but may be difficult to use in downstream analyses. To obtain a more R friendly table, the package also provides a funtion called `skim_to_wide()`, which returns a regular data frame.
 
-*Excercise:* create a wide summary of the `murders` data frame. How is it different to the original skim summary?
+*exercise:* create a wide summary of the `murders` data frame. How is it different to the original skim summary?
 
-```{r Excercise Skimr 2}
+```{r exercise Skimr 2}
 
 ```
 
