@@ -1,0 +1,155 @@
+---
+title: "Intro to Markdown"
+output: html_notebook
+---
+
+# Intro
+Jacobo de la Cuesta-Zuluaga. July 2019. This notebook contains the code and exercises used in the session *Intro to RMarkdown*, tutored by Jacobo de la Cuesta-Zuluaga as part of the R for Bioscientists 2019 summer course at the Max-Planck Institute for Developmental Biology.
+
+## Before we begin
+
+There are many good resources on the internet for learning both statistics and R (or both combined!). Don't ever be afraid or ashamed of googling things, this is a skill on its own, and mastering it will help you a lot. Here are some resources that may be of help:
+
+  * https://www.datacamp.com/ : free and paid interactive data analysis and R courses
+  * http://www.sthda.com/ : large ammount of tutorials for any kind of analyses and graph generation in R
+  * https://www.statmethods.net/index.html : short and clear explanation of R functions
+  * https://stats.stackexchange.com/ : forum where people ask and answer all kind of statistics-related questions.
+  * https://stackoverflow.com/ : similar to StatsExchange, but for programming-related questions. You will get to love this site, seriously. If you want to do anything in R (or any other programming language), or you keep bumping into an error, just google it; most likely someone has already asked that question in StackOverflow and you will likely get one (or more) answers.
+  * https://www.r-bloggers.com/ : an aggregator of people bloging various R stuff. You can search for tutorials, news, opinions and other R-related things.
+  * http://jef.works/R-style-guide/ : Best practices for readable, sharable, and verifiable R code
+  
+You can also use https://rseek.org/, which is a search engine optimized to return results to R-related queries.
+
+# Markdown
+
+Markdown is a way of formating or styling text from plain form to HTML. You can use to write reproducible, dynamic reports that combine text, images and code. These reports can be then exported as pdf, doc or html files.
+
+****
+
+Compare the formating in markdown and compare with the result generated in the viewer pane of Rstudio:
+
+Plain text   
+
+End a line with two spaces to start a new paragraph.   
+
+*italics* and _italics_   
+
+**bold** and __bold__   
+
+superscript^2^   
+
+~~strikethrough~~   
+
+[Hyperlink](http://eb.mpg.de/)   
+
+# Header 1   
+## Header 2  
+### Header 3   
+#### Header 4   
+##### Header 5   
+###### Header 6   
+
+endash: --   
+emdash: ---   
+ellipsis: ...   
+
+horizontal rule (or slide break):  
+
+****
+
+> block quote
+
+* unordered list 
+* item 2     
+    + sub-item 1     
+    + sub-item 2 
+
+1. ordered list 
+1. item 2 
+    1. sub-item 1     
+    1. sub-item 2 
+  
+| Column 1 | Column 2 | Column 3 |
+|----------|----------|----------|
+|  One | 1 | A |
+| Two | 2 | B |
+| Three | 3 | C |
+
+
+`inline code` can be inserted with backticks
+
+```
+# code block
+print '3 backticks'
+```
+
+****
+
+Take ~10 to 15 minutes to go through [this markdown interactive tutorial](https://commonmark.org/help/tutorial/). You can also find Rstudio's guide to Rmarkdown [here](https://rmarkdown.rstudio.com)
+
+Once you are finished, go ahead and format the following text. Try to include all the elements of markdown styling you can.
+
+Max Planck Institute for Developmental Biology
+Research
+The variety of topics investigated by scientists at the MPI for Developmental Biology is extensive, although all subjects have a biological theme. The cutting-edge technology in molecular and cellular biology and computational science available at the institute is enabling scientists to gain increasing insight into cellular and developmental processes. A highly dynamic and interdisciplinary approach is applied from the molecular level to cells, tissues, and the whole organism. [Read more](http://eb.mpg.de/research/)
+
+Departments of the MPI for Developmental Biology
+Department 1 - Protein Evolution
+Department 2 - Biochemistry
+Department 3 - Microbiome Science
+Department 4 - Evolutionary Biology
+Department 5 - Cell Biology
+Department 6 - Molecular Biology
+
+Facilities
+The core facilities of the MPI for Developmental Biology are:
+Electron Microscopy
+Light Microscopy
+NMR Spectroscopy
+Genome Center
+X-Ray Crystallography
+The facilities offer a broad range of methods and techniques and provide a motivating and helpful environment where researchers/users are trained and supported throughout their projects.
+
+Events
+Every other year the institutes of the Tübingen campus invite the general public to their Open House or participate in the TÜFF (Tübinger Fenster für Forschung), a science fair. Scientists participate regularly at events like the "Kinder-Uni" (Children's University), the Maus-Türöffner-Tag (open house event for children), as well as in presentations and podium discussions hosted by the MPI for Developmental Biology, FML or the partner institutes. 
+
+****
+
+One last thing before we continue with R. You can also execute code from an R markdown document. You saw that a code chunk is opened and closed by 3 backticks, but an extra thing must be added to have executable code, a set of curly brackets `{}` where you can specify the execution options. 
+
+To insert a code chunk, use the shortcut `Ctrl+Alt+I` or `Command+Option+I`
+
+```{r}
+# Hello world
+
+```
+
+You can create a variable in one chunk...
+```{r}
+# create my_var
+
+```
+
+... and print it in another
+```{r}
+# print my_var
+
+```
+
+They can also display tables in a very convinient way
+```{r}
+# Head of mtcars
+```
+
+You can name your code chunks for easier reference
+```{r Named Code Chunk 1}
+# Like this
+```
+
+Chunk output can be customized with arguments set in the `{}` of a chunk header. From Rstudio's [markdown guide:](https://rmarkdown.rstudio.com/lesson-3.html)
+
+* `include = FALSE` prevents code and results from appearing in the finished file. R still runs the code in the chunk, and the results can be used by other chunks.
+* `echo = FALSE` prevents code, but not the results from appearing in the finished file. This is a useful way to embed figures.
+* `message = FALSE` prevents messages that are generated by code from appearing in the finished file.
+* `warning = FALSE` prevents warnings that are generated by code from appearing in the finished.
+

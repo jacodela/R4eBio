@@ -1,0 +1,306 @@
+---
+title: "Data wrangling and tidying with the tidyverse"
+output: html_notebook
+---
+
+# Introduction
+Jacobo de la Cuesta-Zuluaga. July 2019.
+
+This notebook contains the code and exercises used in the session *data wrangling with the tidyverse*, tutored by Jacobo de la Cuesta-Zuluaga as part of the R for Bioscientists 2019 summer course at the Max-Planck Institute for Developmental Biology.
+
+## Tidyverse resources
+
+You can find more `tidyverse` tutorials and slides here:
+
+* https://github.com/rstudio/webinars/blob/master/05-Data-Wrangling-with-R-and-RStudio/wrangling-webinar.pdf
+* http://stat545.com/block009_dplyr-intro.html
+* https://genomicsclass.github.io/book/pages/dplyr_tutorial.html
+
+# Data Wrangling and tidying
+
+Data organization, also called data wrangling, is vital for the data analysis. It lays between data data acquisition and exploratory data analysis, and anyone wishing to do any kind of analysis needs to have this skill. You may even hear from time to time that data wrangling can take more time than the analysis itself. This may not always be true, but what is sure is that knowing how to handle your data will make your life easier down the line.
+
+## Libraries
+Remember to load all the libraries you are going to use at the top of your code.
+```{r Load Libraries}
+library(tidyverse)
+```
+
+The tidiverse is a collection of libraries (or packages) that greatly extend, standarize and facilitate the work that can be done using base R. When you use the command `library(tidyverse)`, you load all of them, and is not needed to load them separately. The ones we will learn today are:
+
+* `magrittr`: pipes to chain commands
+* `dplyr`: functions to manipulate, filter and transform data in tables
+* `stringr`: functions to detect, filter and manipulate strings (i.e. text)
+* `forcats` functions to work with categorical variables
+
+## Magrittr: chaining commands
+The pipe operator `%>%`  allows to chain multiple commands, avoiding nesting, which may be difficult to interpret sometimes. It takes output from the left and uses it as the first argument of input on the right.  
+> `f(x)` can be repliced with `x %>% f()`
+
+```{r Pipe Example 1}
+# Instead of doing this
+pipe_vector = c(1,2,3,4)
+nest_sum = sum(pipe_vector)
+
+# You can do this
+pipe_sum = c(1,2,3,4) %>% sum()
+```
+
+*Exercise:* check that pipe_vector and pipe_sum are the exact same value
+```{r Pipe Exercise 1}
+ 
+```
+
+The shortcut for the pipe operator is **ctrl (cmd in mac) + shift + m**
+
+*Exercise:* Say you have a vector of numbers, and you want to obtain the LogSumExp (LSE) function rounded to 2 decimals. How would you do it using the pipe notation?
+```{r Pipe Exercise 2}
+# Hint: remember that nested expresions are read from the inside out
+LSE_vector = c(57.4575944579037, 57.3494891723124, 64.7442112250003, 
+               33.5612519726716, 50.3621377196813, 64.5753329324498, 
+               50.6875764482456, 56.976065103144, 80.7721481628612, 
+               24.1437947362053, 46.7846494165164, 68.7746608029935, 
+               54.9070662378032, 40.5735918692096, 17.5124183231784, 
+               58.3167759488857, 65.5246300228272, 90.6876151722322, 
+               82.3151383347741, 48.7184432403966)
+
+nested_LSE = round(log(sum(exp(LSE_vector))), 2)
+
+# Code Here
+```
+
+## dplyr: dealing with tables
+
+`dplyr` is a package for data manipulation that lets you transform and summarize tabular data. It makes operations such as filtering for rows, selecting specific columns, re-ordering rows, adding new columns and summarizing data simple.
+
+First, let's load the tables we will use and explore their contents.
+
+```{r Load gapminder}
+gapminder = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/gapminder.tsv")
+
+```
+
+```{r Load polls}
+polls = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/polls_us_election_2016.tsv")
+
+```
+
+```{r Load murders}
+murders = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/murders.tsv")
+
+```
+
+### Filtering tables
+Use `filter()` to subset rows of data. Just specify the column(s) and the criteria you want to use to filter. You create the logical tests using boolean operators (e.g. `>`, `<`, `>=`, `<=`, `!=`, `%in%`)
+
+For example, we want to filter the table to see data corresponding to Argentina, save it in a new variable and print it
+```{r Filter Example 1}
+
+```
+
+If you want to filter by multiple factors of the same categorical variable, like filtering the data of Argentina *and* Chile
+```{r Filter Example 2}
+
+```
+
+It also works with numerical variables. For example, if you are interested in the data of 1990 of all countries, you can do 
+```{r Filter Example 3}
+
+```
+
+
+Or if what you want is a range of values, you can specify multiple conditions, in a similar way of how you add *AND* or *OR* when you google. For this you use `&` and `|`, respectively. Say we want the data of the 80s:
+```{r Filter Example 4}
+
+```
+
+
+*Exercise:* filter the gapminder data to determine the population of your country of origin in the year you were born. Compare that to the population of the year 2015.
+```{r Filter Exercise 1}
+
+```
+
+The number of conditions is not limited to two. For example, we could see which countries had a life expentancy below 50 years in Africa in 1966
+```{r Filter Example 5}
+
+```
+
+Filters can get as complex as you want them to be. In addition, you can create filters in multiple steps and use functions within your filters. For example, if we wanted to determine the countries of South America and the Caribbean with a fertility rate above the median for those regions in 1970, we could do:
+```{r Filter Example 6}
+
+```
+Note that the order in which you create the filters is very important.
+
+*Exercise:* Would the resulting table be the same if you switched the order of the filters (i.e. first by median fertility, and then by region and year)? Why or why not? Try it yourself and compare the resulting tables
+```{r Filter Exercise 2}
+
+```
+
+### Selecting columns
+
+We don't always need all the data in a table, and we wish to use a few columns. To do this, we use the `select()` function with the names of the columns we want.
+
+For this section, we'll use the `polls` data frame. First, let's see the structure the table again
+
+```{r Select Example 1}
+
+```
+
+If you want to select a single column, you just pass its name to the function. For example, if you want the sample sizes of the polls
+```{r Select Example 2}
+
+```
+
+Not very complex nor interesting. You can also select multiple columns in a single command, something more realistic. For example, if we wanted to see the the grades that the pollsters recieved on each state
+
+```{r Select Example 3}
+
+```
+
+*Exercise:* create a table with the data of the U.S. state and the dates each was polled.
+```{r Select Exercise 1}
+
+```
+
+
+You can include all the columns you want in a vector. Then, if you realize that you don't want a column, you can just drop it. For example, if we want to filter the `grade_state` table to remove the grade, you add a minus `-` sign before the name
+
+```{r Select Example 4}
+
+```
+
+#### Helper verbs
+
+Note that the names of the columns of the `polls` table have a pattern. We can use this in our favor; there are helper functions that facilitate the selection of columns.
+
+* `starts_with()` = Select columns that end with a character string
+* `ends_with()` = Select columns that end with a character string
+* `contains()` = Select columns that contain a character string
+* `matches()` = Select columns that match a regular expression
+* `one_of()` = Select columns names that are from a group of names
+
+For example, if we want the data of all pollsters by state of Clinton and Trump but remove the raw poll information
+```{r Select Example 5}
+
+```
+If the information of the column you want is in the middle, and `starts_with()` or `ends_with()` don't work, you use `contains()` or `matches()`. If you want all the columns that contain the string "poll", you can do
+```{r Select Example 7}
+
+```
+
+*Exercise:* Create and print a table with the pollsters, the dates of the polls, the sample size and the raw information of all the candidates that are not Trump or Clinton.
+```{r Select Exercise 2}
+
+```
+
+
+### Pulling columns
+By now you should have noticed that `select()` returns a data.frame object. But sometimes we need a vector instead. For this, we can use the function `pull()`. For example, if we want a vector containing the starting dates of the polls, we can do it as follows
+```{r Pull Example 1}
+
+```
+
+*Exercise:* try to pull two columns at the same time
+```{r Pull Exercise 1}
+
+```
+
+Unlike `select()`, `pull()` only takes one argument.
+### Arranging tables
+
+You can also arrange your tables by the order of one or more variables with `arrange()`. By default, it arranges in ascending order
+
+We will use the `murders` dataset. Say you want to print the 10 US states with the lowest murder number:
+```{r Arrange Example 1}
+
+```
+
+Or if you want it in descending order:
+```{r Arrange Example 2}
+
+```
+
+It is also possible to combine multiple variables. For example, if we want to order the table by region and then by total murders
+```{r Arrange Example 3}
+
+```
+
+*Exercise*: Does the order of the parameters affect the result? Try it arranging the table by population and region
+```{r Arrange Exercise 1}
+
+```
+
+
+### Mutate and transmute
+
+You can also create new variables from one or more existing columns. You can create a new column in your table using `mutate()` or create new tables using `transmute()`. You just specify the name of the new column and the function(s) you want to apply to your data. 
+
+We will continue withthe `murders` dataset. We may need to transform one variable, for example, if we needed to obtain the log-transformed population of each US state for further analysis, we would do something like this:
+
+```{r Mutate Example 1}
+
+```
+
+
+*Exercise:* The total deaths as provided are not very informative, it would be better to have a relative measure. Create a new variable in which you store the number of murders by 100.000 inhabitants on each state
+```{r Mutate Exercise 1}
+
+```
+
+*Exercise:* Is the top 10 ranking of most dangerous US states the same if you do calculate it using the total or the rate? Compare both
+```{r Mutate Exercise 2}
+
+```
+
+### Summarise variables
+
+The functions we just saw are useful to manipulate a query data frames, and combined with the functions `group_by()` and `summarise()` can be really useful to avoid repetitive code.
+
+The function `group_by()` creates a set of data frames filtered by the values of a factor of a given column. That may not sound very clear, so let's see it in acction.
+
+```{r Group_by Example 1}
+# structure of the gapminder dataframe as is
+
+# structure of the gapmined dataframe grouped by continent
+
+```
+
+Note that the structure of the dataframe where we used `group_by()` is not the same as the original gapminder. The grouped_df can be though of a list of data frames, where each only contains the values of a given continent. We just saved some time by using one comand instead of filtering by continent 5 times.
+
+We can next execute functions on each of the tables saved in the grouped data frame. For this, we use the function `summarise()`, which applies the same function on each of the tables separately and shows the result. For example, if we want to know how many countries were recorded in each continent in the year 1960 we can do it using `summarise()` plus `n()`
+
+```{r Summarise Example 1}
+# Note that n() is called within summarise()
+
+```
+
+*Exercise:* You can also obtain summaries of numerical variables. Given that you now know how to create new variables in a data frame, create a new dataframe `gapminder_gdp`, calculate the GDP per capita of each country, and determine the mean gdp per capita of each continent in the year 1992
+```{r Summarise Exercise 1}
+
+```
+
+You can summarise multiple variables in a single call, separating them by a comma within `summarise()`. Also, you can continue applying functions to the output of `summarise()`. 
+
+*Exercise:* determine the difference between the minimum and the maximum life expectancy values of each countriy. Tip: try to obtain a table with the minimum and maximum of each country, once you have it, calculate the difference with one of the functions we've already seen.
+```{r Group_by Example 2}
+
+```
+
+We can combine multiple variables to be used by `group_by()`. If we were interested in seeing how the median values per continents change with time, with can combine year and continent
+
+```{r Group_by Example 3}
+# Calculate the median infant mortality rate per continen per year
+
+# Sneak preview: plot median mortality by year
+
+```
+
+# Session info
+
+For reproducibility, it is good to add a line that shows the libraries and the versions we used in our analyses.
+
+```{r}
+sessionInfo()
+```
+
+
