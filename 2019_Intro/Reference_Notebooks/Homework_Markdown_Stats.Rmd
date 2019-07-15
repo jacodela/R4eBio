@@ -1,0 +1,131 @@
+---
+title: "Homework - Markdown and basic stats"
+output: html_notebook
+---
+
+# Introduction
+Jacobo de la Cuesta-Zuluaga. July 2019.
+
+The present notebook contains excercises about RMarkdown and basic summary statistics
+
+# Questions
+
+## Markdown
+
+The present notebook contains excercises about basic data wrangling using the tidyverse.
+
+### Question 1
+
+Format the following text to make it look like in the picture
+![](https://raw.githubusercontent.com/jacodela/R4eBio/master/2019_Intro/Data/Example_Markdown.png)
+
+# Nonlinear phenotypic variation uncovers the emergence of heterosis in *Arabidopsis thaliana*
+
+*François Vasseur*, *Louise Fouqueau*, *Dominique de Vienne*, *Thibault Nidelet*, *Cyrille Violle* and *Detlef Weigel*
+
+**Published: April 24, 2019.**
+
+## Author summary
+
+Hybrids often grow faster and produce more offspring than their parents. This phenomenon, called hybrid vigour or heterosis, has been extensively exploited in agriculture. Even though several hypotheses have been proposed to explain the genetic basis of hybrid superiority, there is still no unifying model able to accurately predict the extent and amplitude of heterosis. Here, we tested a model based on physiological constraints to explain the emergence of heterosis in the model plant *Arabidopsis thaliana*. Rooted in the mathematical modelling of phenotypic relationships, our study demonstrates that heterosis can be explained simply with the nonlinearity of trait variation. Our model notably predicts the amplitude of heterosis of two performance traits: growth rate and fruit production. We expect that our model can help to understand the physiology of nonadditive inheritance in different species and that it will open new avenues in both theoretical and applied biology.
+
+### Abbreviation
+* AIC, Akaike information criterion; 
+* BPH, best-parent heterosis; 
+* KDE, kernel density estimation; 
+* MPH, mid-parent heterosis
+
+### Citation
+> Vasseur F, Fouqueau L, de Vienne D, Nidelet T, Violle C, Weigel D (2019) Nonlinear phenotypic variation uncovers the emergence of heterosis in Arabidopsis thaliana. [PLoS Biol 17(4): e3000214.](https://doi.org/10.1371/journal.pbio.3000214)
+
+### References
+1. Fu D, Xiao M, Hayward A, Jiang G, Zhu L, Zhou Q, et al. What is crop heterosis: new insights into an old topic. J Appl Genet. 2015;56: 1–13. pmid: 25027629
+
+1. Crow JF. 90 years ago: the beginning of hybrid maize. Genetics. 1998;148: 923–928. pmid: 9539413
+
+1. Jones DF. Dominance of linked factors as a means of accounting for heterosis. Proc Natl Acad Sci U S A. 1917; 3(4): 310–312. pmid: 16586724
+
+## Summary statistics
+
+For this section, you will use the `diamonds` data set that comes with the library `ggplot2`; it contains the prices and other attributes of almost several thousand diamonds.
+
+
+Just run the following chunk of code. Write each answer in its own chunk of code
+
+```{r Load}
+library(ggplot2)
+diamonds
+```
+
+### Question 2
+
+How many entries does the data set has? How many variables are there? What are the classes of the variables?
+
+```{r}
+str(diamonds)
+d_entries = nrow(diamonds)
+d_entries
+```
+
+### Question 3
+
+What is the average price of a diamond? How much does the price deviate from the average value?
+```{r}
+mean(diamonds$price)
+sd(diamonds$price)
+```
+
+### Question 4
+
+What is the minimum and maximum caratage of the diamonds in the data set? Determine this in two different ways
+
+```{r}
+min(diamonds$carat)
+max(diamonds$carat)
+range(diamonds$carat)
+```
+
+### Question 5
+
+How many diamonds are classified as "Ideal" according to the cut? How many as "Fair"?
+```{r}
+table(diamonds$cut)
+```
+
+### Question 6
+
+What color of diamond is the most expensive by median?
+
+```{r}
+aggregate(price ~ color, diamonds, median)
+```
+
+
+### Question 7
+
+What is the difference in caratage between the 90th percentile "Premium" diamond and the 90th percentile "Very Good" diamond?
+
+```{r}
+aggregate(carat ~ cut, diamonds, quantile, probs = 0.90)
+```
+
+
+### Question 8
+
+How many "Premium" diamonds have color "H"?
+
+```{r}
+table(diamonds$cut, diamonds$color)
+```
+
+
+### Question 9 
+
+Create a table of cut and clarity. Of all the IF diamonds, what is the proportion classified as "Fair"? Of all the "Ideal" diamonds, what is the proportion classified as "I1"?
+
+```{r}
+tab_dmd = table(diamonds$cut, diamonds$clarity)
+prop.table(tab_dmd, 2)
+prop.table(tab_dmd, 1)
+```
+
