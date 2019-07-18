@@ -8,10 +8,23 @@ Jacobo de la Cuesta-Zuluaga. July 2019.
 
 This notebook contains the code and exercises used in the session *data wrangling with the tidyverse*, tutored by Jacobo de la Cuesta-Zuluaga as part of the R for Bioscientists 2019 summer course at the Max-Planck Institute for Developmental Biology.
 
+## Before we begin
+
+There are many good resources on the internet for learning both statistics and R (or both combined!). Don't ever be afraid or ashamed of googling things, this is a skill on its own, and mastering it will help you a lot. Here are some resources that may be of help:
+
+  * https://www.datacamp.com/ : free and paid interactive data analysis and R courses
+  * http://www.sthda.com/ : large ammount of tutorials for any kind of analyses and graph generation in R
+  * https://www.statmethods.net/index.html : short and clear explanation of R functions
+  * https://stats.stackexchange.com/ : forum where people ask and answer all kind of statistics-related questions.
+  * https://stackoverflow.com/ : similar to StatsExchange, but for programming-related questions. You will get to love this site, seriously. If you want to do anything in R (or any other programming language), or you keep bumping into an error, just google it; most likely someone has already asked that question in StackOverflow and you will likely get one (or more) answers.
+  * https://www.r-bloggers.com/ : an aggregator of people bloging various R stuff. You can search for tutorials, news, opinions and other R-related things.
+* http://jef.works/R-style-guide/ : Best practices for readable, sharable, and verifiable R code
+
 ## Tidyverse resources
 
 You can find more `tidyverse` tutorials and slides here:
 
+### dplyr
 * https://github.com/rstudio/webinars/blob/master/05-Data-Wrangling-with-R-and-RStudio/wrangling-webinar.pdf
 * http://stat545.com/block009_dplyr-intro.html
 * https://genomicsclass.github.io/book/pages/dplyr_tutorial.html
@@ -37,22 +50,17 @@ The tidiverse is a collection of libraries (or packages) that greatly extend, st
 The pipe operator `%>%`  allows to chain multiple commands, avoiding nesting, which may be difficult to interpret sometimes. It takes output from the left and uses it as the first argument of input on the right.  
 > `f(x)` can be repliced with `x %>% f()`
 
-
-
 ```{r Pipe Example 1}
 # Instead of doing this
-vectr = c(1,2,3,4)
-vectr
-sum(vectr)
+pipe_vector = c(1,2,3,4)
+nest_sum = sum(pipe_vector)
 
-vectr %>% sum()
+# You can do this
+pipe_sum = c(1,2,3,4) %>% sum()
 ```
 
-*Exercise:* check that pipe_vector and pipe_sum are the exact same value
 ```{r Pipe Exercise 1}
-mean_nested = mean(vectr)
-mean_pipe = vectr %>% mean()
-(mean_nested == mean_pipe) %>% print()
+# Check that pipe_vector and pipe_sum are the exact same value
 ```
 
 The shortcut for the pipe operator is **ctrl (cmd in mac) + shift + m**
@@ -69,16 +77,8 @@ LSE_vector = c(57.4575944579037, 57.3494891723124, 64.7442112250003,
                82.3151383347741, 48.7184432403966)
 
 nested_LSE = round(log(sum(exp(LSE_vector))), 2)
-nested_LSE
+
 # Code Here
-piped_LSE = LSE_vector %>% 
-  exp %>% 
-  sum %>% 
-  log %>% 
-  round(2)
-
-
-piped_LSE
 ```
 
 ## dplyr: dealing with tables
@@ -88,44 +88,51 @@ piped_LSE
 First, let's load the tables we will use and explore their contents.
 
 ```{r Load gapminder}
-gapminder = read.delim("../Data/gapminder.tsv")
+gapminder = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/gapminder.tsv")
 gapminder %>% str
 ```
 
 ```{r Load polls}
-polls = read.delim("../Data/polls_us_election_2016.tsv")
+polls = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/polls_us_election_2016.tsv")
 polls %>% str
 ```
 
 ```{r Load murders}
-murders = read.delim("../Data/murders.tsv")
+murders = read.delim("/Users/jdelacuesta/Nextcloud/Documents/R_for_bio/2019_Data_Wrangling/2019_Intro/Data/murders.tsv")
 murders %>% str
 ```
 
 ### Filtering tables
-Use `filter()` to subset rows of data. Just specify the column(s) and the criteria you want to use to filter. You create the logical tests using boolean operators (e.g. `>`, `<`, `>=`, `<=`, `!=`, "==" `%in%`)
+Use `filter()` to subset rows of data. Just specify the column(s) and the criteria you want to use to filter. You create the logical tests using boolean operators (e.g. `>`, `<`, `>=`, `<=`, `!=`, `%in%`)
 
 For example, we want to filter the table to see data corresponding to Argentina, save it in a new variable and print it
 ```{r Filter Example 1}
-Arg_gampminder = gapminder %>% 
+gapminder_Argentina = gapminder %>% 
   filter(country == "Argentina")
-
-Arg_gampminder
+gapminder_Argentina %>% head()
 ```
 
 If you want to filter by multiple factors of the same categorical variable, like filtering the data of Argentina *and* Chile
 ```{r Filter Example 2}
+gapminder_Ar_Ch = gapminder %>% 
+  filter(country %in% c("Argentina", "Chile"))
 
+gapminder_Ar_Ch %>% head()
 ```
 
 It also works with numerical variables. For example, if you are interested in the data of 1990 of all countries, you can do 
 ```{r Filter Example 3}
-
+gapminder_1990 = gapminder %>% 
+  filter(year == 1990)
+gapminder_1990 %>% head()
 ```
 
 
 Or if what you want is a range of values, you can specify multiple conditions, in a similar way of how you add *AND* or *OR* when you google. For this you use `&` and `|`, respectively. Say we want the data of the 80s:
 ```{r Filter Example 4}
+gapminder_80s = gapminder %>% 
+  filter(year >= 1980 & year <= 1989)
+gapminder_80s %>% head()
 
 ```
 
@@ -137,18 +144,29 @@ Or if what you want is a range of values, you can specify multiple conditions, i
 
 The number of conditions is not limited to two. For example, we could see which countries had a life expentancy below 50 years in Africa in 1966
 ```{r Filter Example 5}
+gapminder_multifilter_1 = gapminder %>% 
+  filter(year == 1966 & continent == "Africa" & life_expectancy < 50)
+gapminder_multifilter_1 %>% head()
 
 ```
 
 Filters can get as complex as you want them to be. In addition, you can create filters in multiple steps and use functions within your filters. For example, if we wanted to determine the countries of South America and the Caribbean with a fertility rate above the median for those regions in 1970, we could do:
 ```{r Filter Example 6}
+gapminder_multifilter_2 = gapminder %>% 
+  filter(region %in% c("South America", "Caribbean") & year == 1970) %>% 
+  filter(fertility < median(fertility, na.rm = T))
 
+gapminder_multifilter_2
 ```
 Note that the order in which you create the filters is very important.
 
 *Exercise:* Would the resulting table be the same if you switched the order of the filters (i.e. first by median fertility, and then by region and year)? Why or why not? Try it yourself and compare the resulting tables
 ```{r Filter Exercise 2}
-
+gapminder_multifilter_3 = gapminder %>%
+  filter(fertility < median(fertility, na.rm = T))%>% 
+  filter(region %in% c("South America", "Caribbean") & year == 1970)
+  
+gapminder_multifilter_3
 ```
 
 ### Selecting columns
@@ -158,18 +176,20 @@ We don't always need all the data in a table, and we wish to use a few columns. 
 For this section, we'll use the `polls` data frame. First, let's see the structure the table again
 
 ```{r Select Example 1}
-
+polls %>% str
 ```
 
 If you want to select a single column, you just pass its name to the function. For example, if you want the sample sizes of the polls
 ```{r Select Example 2}
-
+s_size = polls %>% select(samplesize)
+s_size %>%  head
 ```
 
 Not very complex nor interesting. You can also select multiple columns in a single command, something more realistic. For example, if we wanted to see the the grades that the pollsters recieved on each state
 
 ```{r Select Example 3}
-
+grade_state = polls %>% select(pollster, grade, state)
+grade_state %>% head
 ```
 
 *Exercise:* create a table with the data of the U.S. state and the dates each was polled.
@@ -181,7 +201,8 @@ Not very complex nor interesting. You can also select multiple columns in a sing
 You can include all the columns you want in a vector. Then, if you realize that you don't want a column, you can just drop it. For example, if we want to filter the `grade_state` table to remove the grade, you add a minus `-` sign before the name
 
 ```{r Select Example 4}
-
+poll_state = polls %>% select(-grade)
+poll_state %>% head
 ```
 
 #### Helper verbs
@@ -196,11 +217,15 @@ Note that the names of the columns of the `polls` table have a pattern. We can u
 
 For example, if we want the data of all pollsters by state of Clinton and Trump but remove the raw poll information
 ```{r Select Example 5}
-
+poll_multiselect_1 = polls %>% 
+  select(pollster, state, ends_with("Clinton"), ends_with("Trump"), -starts_with("raw"))
+poll_multiselect_1 %>% head()
 ```
 If the information of the column you want is in the middle, and `starts_with()` or `ends_with()` don't work, you use `contains()` or `matches()`. If you want all the columns that contain the string "poll", you can do
 ```{r Select Example 7}
-
+poll_multiselect_2 = polls %>% 
+  select(contains("poll"))
+poll_multiselect_2 %>%  head()
 ```
 
 *Exercise:* Create and print a table with the pollsters, the dates of the polls, the sample size and the raw information of all the candidates that are not Trump or Clinton.
@@ -212,7 +237,10 @@ If the information of the column you want is in the middle, and `starts_with()` 
 ### Pulling columns
 By now you should have noticed that `select()` returns a data.frame object. But sometimes we need a vector instead. For this, we can use the function `pull()`. For example, if we want a vector containing the starting dates of the polls, we can do it as follows
 ```{r Pull Example 1}
+starting_dates = polls %>%
+  pull(startdate)
 
+starting_dates[1:10]
 ```
 
 *Exercise:* try to pull two columns at the same time
@@ -227,22 +255,25 @@ You can also arrange your tables by the order of one or more variables with `arr
 
 We will use the `murders` dataset. Say you want to print the 10 US states with the lowest murder number:
 ```{r Arrange Example 1}
-
+states_murder_low = murders %>% arrange(total)
+states_murder_low %>% head(n = 10)
 ```
 
 Or if you want it in descending order:
 ```{r Arrange Example 2}
-
+states_murder_high = murders %>% arrange(-total)
+states_murder_high %>% head(n = 10)
 ```
 
 It is also possible to combine multiple variables. For example, if we want to order the table by region and then by total murders
 ```{r Arrange Example 3}
-
+states_murder_region = murders %>% arrange(region, -total)
+states_murder_region
 ```
 
 *Exercise*: Does the order of the parameters affect the result? Try it arranging the table by population and region
 ```{r Arrange Exercise 1}
-
+murders %>% arrange(region, population)
 ```
 
 
@@ -253,13 +284,15 @@ You can also create new variables from one or more existing columns. You can cre
 We will continue withthe `murders` dataset. We may need to transform one variable, for example, if we needed to obtain the log-transformed population of each US state for further analysis, we would do something like this:
 
 ```{r Mutate Example 1}
-
+murders_log = murders %>% mutate(pop_log = log10(population))
+murders_log %>% head()
 ```
 
 
 *Exercise:* The total deaths as provided are not very informative, it would be better to have a relative measure. Create a new variable in which you store the number of murders by 100.000 inhabitants on each state
 ```{r Mutate Exercise 1}
-
+murders_rate = murders %>% mutate(rate = total/(population/100000))
+murders_rate %>% head()
 ```
 
 *Exercise:* Is the top 10 ranking of most dangerous US states the same if you do calculate it using the total or the rate? Compare both
@@ -275,9 +308,9 @@ The function `group_by()` creates a set of data frames filtered by the values of
 
 ```{r Group_by Example 1}
 # structure of the gapminder dataframe as is
-
+gapminder %>% str
 # structure of the gapmined dataframe grouped by continent
-
+gapminder %>% group_by(continent) %>% str
 ```
 
 Note that the structure of the dataframe where we used `group_by()` is not the same as the original gapminder. The grouped_df can be though of a list of data frames, where each only contains the values of a given continent. We just saved some time by using one comand instead of filtering by continent 5 times.
@@ -286,7 +319,10 @@ We can next execute functions on each of the tables saved in the grouped data fr
 
 ```{r Summarise Example 1}
 # Note that n() is called within summarise()
-
+gapminder %>% 
+  filter(year == 1990) %>% 
+  group_by(continent) %>% 
+  summarise(n_countries = n())
 ```
 
 *Exercise:* You can also obtain summaries of numerical variables. Given that you now know how to create new variables in a data frame, create a new dataframe `gapminder_gdp`, calculate the GDP per capita of each country, and determine the mean gdp per capita of each continent in the year 1992
@@ -298,16 +334,24 @@ You can summarise multiple variables in a single call, separating them by a comm
 
 *Exercise:* determine the difference between the minimum and the maximum life expectancy values of each countriy. Tip: try to obtain a table with the minimum and maximum of each country, once you have it, calculate the difference with one of the functions we've already seen.
 ```{r Group_by Example 2}
-
+gapminder %>% group_by(country) %>% summarise(delta = max(life_expectancy))
 ```
 
 We can combine multiple variables to be used by `group_by()`. If we were interested in seeing how the median values per continents change with time, with can combine year and continent
 
 ```{r Group_by Example 3}
 # Calculate the median infant mortality rate per continen per year
+gapminder %>% 
+  group_by(year, continent) %>% 
+  summarise(median_IM = median(infant_mortality, na.rm = T)) 
 
 # Sneak preview: plot median mortality by year
 
+gapminder %>% 
+  group_by(year, continent) %>% 
+  summarise(median_IM = median(infant_mortality, na.rm = T)) %>%
+  ggplot(aes(x = year, y = median_IM, color = continent)) +
+  geom_line()
 ```
 
 ### Join tables
@@ -346,22 +390,22 @@ Joins are easier to understand [visually](https://1.bp.blogspot.com/-rjqoIgDcZjc
 
 Add participant data to the disgust table.
 ```{r Left Join Example}
-
+disg_user = left_join(disgust, user, by = "user_id")
 ```
 
 Create a table with only disgust and personality data from the same user_id collected on the same date.
 ```{r Inner Join Example 1}
-
+disg_user_date = inner_join(disgust, ocean, by = c("user_id", "date"))
 ```
 
 Join data from the same user_id, regardless of date. Does this give you the same data table as above?
 ```{r Inner Join Example 2}
-
+disg_user_nodate = inner_join(disgust, ocean, by = c("user_id"))
 ```
 
 Create a table of the disgust and personality data with each user_id:date on a single row, containing all of the data from both tables.
 ```{r FUll Join Example}
-
+digs_user_all = full_join(disgust, ocean, by = c("user_id", "date"))
 ```
 
 # Session info
