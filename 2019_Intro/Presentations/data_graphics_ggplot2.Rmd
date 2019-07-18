@@ -10,7 +10,14 @@ library(tidyverse)
 
 ## Why data graphics? 
 
-## What kind of graph to use?
+ * Easier to read than numbers
+ * Amaze your audience
+ * Explore your data
+
+## Which kind of graph to use?
+
+ * What others are using
+ * What fits your data
 
 ## How to plot it?
 
@@ -63,9 +70,11 @@ barplot(rep(1,times=6),col=1:6, axes=FALSE)
 
 ## Be careful with colors
 
- * Perception is influenced by both hue and intensity
+ * Perception is influenced by hue, saturation, and lightness
  * Use color-blind safe palettes where possible
  * Avoid using color for quantitative scales
+ 
+See: http://www.personal.psu.edu/cab38/ColorSch/ASApaper.html
 
 ## Where to put the cutoff? 
 
