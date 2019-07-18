@@ -295,6 +295,60 @@ We can combine multiple variables to be used by `group_by()`. If we were interes
 
 ```
 
+### Join tables
+
+One thing that you'll find yourself doing over and over is joining or merging tables that contain overalping information. Think of an RNA-seq experiment where in one table you have the expression values and in another you have the metadata of the samples. For this section, we will follow the material of Lisa DeBruine and Dale Barr's [MSC Data Skills course](https://psyteachr.github.io/msc-data-skills/)
+
+First, we need to load three tables located in their Github repo
+
+```{r}
+disgust = read_csv("https://psyteachr.github.io/msc-data-skills/data/disgust_scores.csv")
+ocean = read_csv("https://psyteachr.github.io/msc-data-skills/data/personality_scores.csv")
+user = read_csv("https://psyteachr.github.io/msc-data-skills/data/users.csv")
+```
+
+```{r}
+disgust %>% head 
+ocean %>%  head
+user %>% head
+```
+
+Today we'll just see the mutating joins, that is, those that transform the resulting table. All mutating tables have the same basic sintax: `****_join(x, y, by = Col_Name)`, where
+
+* `x`: the first (left) table
+* `y`: the second (right) table
+* `by`: columns used to match. If left blank, it will use all columns that have the same names in both columns. Try to be explicit with this argument, don't leave it blank. 
+
+The mutating joins are
+
+* `left_join()`: left join keeps all the data from the first table and joins anything that matches from the second table. If there are multiple matches, there will be more than one row with the same join value in the joined table
+* `right_join()`: similar to `left_join()`, right joins keep all the data from the second table and joins anything that matches from the first
+* `inner_join()`: the inner join generates a table with the intersection of x and y, i.e. returns all the rows that have a match in the other table. If there are multiple matches, there will be more than one row with the same join value in the joined table
+* `full_join()`: the full join merges the rows in both tables, keeping all the information from both. If a row doesn’t have a match in the other table, the other table’s column values are set to `NA`.
+
+Joins are easier to understand [visually](https://1.bp.blogspot.com/-rjqoIgDcZjc/W54wxCyW1OI/AAAAAAAAA9Q/MVyr9QwSvCYl-xGRdxrqE1dyxVKtjq0CgCLcBGAs/s1600/join_function.png)
+
+
+Add participant data to the disgust table.
+```{r Left Join Example}
+
+```
+
+Create a table with only disgust and personality data from the same user_id collected on the same date.
+```{r Inner Join Example 1}
+
+```
+
+Join data from the same user_id, regardless of date. Does this give you the same data table as above?
+```{r Inner Join Example 2}
+
+```
+
+Create a table of the disgust and personality data with each user_id:date on a single row, containing all of the data from both tables.
+```{r FUll Join Example}
+
+```
+
 # Session info
 
 For reproducibility, it is good to add a line that shows the libraries and the versions we used in our analyses.
