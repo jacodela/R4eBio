@@ -1,0 +1,257 @@
+---
+title: "Basic plotting with ggplot2 - Homework"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+# Homework exercises
+
+## Data visualization concepts
+
+"Food for thought" questions - no strictly right or wrong answers, just to get 
+you to start thinking about how data visualization works.
+
+1. Explain a histogram in terms of the graphical elements listed above.
+
+2. Explain Florence Nightingale's 
+ [coxcomb diagram](http://www.florence-nightingale-avenging-angel.co.uk/Coxcomb.tif) 
+ in terms of the graphical grammar. 
+ [Further reading](http://www.florence-nightingale-avenging-angel.co.uk/?p=462)
+
+3. How is scaling different from a coordinate system?
+
+## Scatterplots 
+
+Load the `gapminder.tsv` data from Jacobo for the following exercises.
+
+```{r}
+gapminder <- read.delim("../Data/gapminder.tsv")
+```
+
+1. What is the relationship between fertility and population? 
+Plot a scatterplot of fertility vs population for all countries for 1970. 
+Save the plot to a named ggplot object, e.g. `fertility_population_1970`. 
+
+```{r}
+# Picking year 1970
+str(gapminder)
+fertility_population_1970 <- gapminder %>% 
+  filter(year==1970) %>% 
+  ggplot(aes(x=population,y=fertility))
+# In this solution, the aes parameter is within the `ggplot` function
+# but you can also put it within the `geom_point` function
+fertility_population_1970 + geom_point()
+```
+
+2. In the plot above, also color the points by continent.
+
+```{r}
+fertility_population_1970 + geom_point(aes(col=continent))
+```
+
+3. In the plot above, also scale the point sizes by gdp. 
+
+Note the error message, which did not appear before. 
+What does it mean? 
+How might you preprocess the data to deal with this? Should you?
+
+```{r}
+fertility_population_1970 + geom_point(aes(col=continent,size=gdp))
+```
+
+> The error message only appeared when the variable `gdp` was added to the plot. 
+> This probably means that the column `gdp` in the data.frame has some missing 
+> values, which were omitted from the plot. 
+
+> One way to deal with this is to filter the table before plotting. However, 
+> when exploring the data for the first time, it is usually worth checking which 
+> values are missing. This may indicate problems with the upstream data 
+> processing, or it may be the relevant to the analysis or interpretation of 
+> your data and its reliability.
+
+4. The points are not evenly spaced in the plot, but skewed to one side. 
+
+How might you improve legibility? (Hint: This is a matter of scaling...)
+
+```{r}
+# Use a log scale for the population axis
+(fertility_population_1970 
+ + geom_point(aes(col=continent,size=gdp)) 
+ + scale_x_log10()
+)
+```
+
+
+5. Export the plot as a PDF file, 10 by 5 cm in size.
+
+```{r}
+plot_output <- (fertility_population_1970 
+ + geom_point(aes(col=continent,size=gdp)) 
+ + scale_x_log10()
+)
+ggsave("test.pdf", plot=plot_output, width=10, height=5, units="cm")
+```
+
+## Line plots
+
+We continue to use the `gapminder` data for this exercise (see above).
+
+1. How has life expectancy changed over time? Plot the life expectancy (vertical
+axis) vs. year (horizontal) with `geom_line`, drawing one line per country.
+(Reminder: Use the `group` aesthetic.)
+
+```{r}
+(ggplot(gapminder,aes(x=year,y=life_expectancy)) 
+ + geom_line(aes(group=country))
+)
+```
+
+2. The above is not very legible or informative. Color and facet the lines by 
+continent to help the reader see some trends. (Hint: Use facet_wrap)
+
+Does it make more sense to have the facets in a single row or a single column?
+
+```{r}
+(ggplot(gapminder,aes(x=year,y=life_expectancy)) 
+ + geom_line(aes(group=country,col=continent))
+ + facet_wrap("continent",nrow=1)
+)
+```
+
+3. *Challenge* - Superimpose a summary trend line for each continent. 
+(Hint 1: Look up the ggplot2 reference to find another geom that draws trend 
+lines.)
+(Hint 2: Lighten the individual lines with the `alpha` parameter in the 
+`geom_line()` function.)
+
+```{r}
+(ggplot(gapminder,aes(x=year,y=life_expectancy))
+ + geom_line(aes(group=country,col=continent), alpha=0.2)
+ + geom_smooth(aes(col=continent))
+ + facet_wrap("continent",nrow=1)
+)
+# Note how alpha is outside the aes() parameter
+```
+
+## Barplots
+
+We use the Titanic dataset for this exercise.
+
+```{r}
+# Run this first to reformat the Titanic dataset 
+# Load data
+data(Titanic)
+# Convert to data.frame
+titanic.df <- as.data.frame(Titanic)
+# Convert to long format
+titanic.long <- titanic.df[rep(row.names(titanic.df),titanic.df$Freq),1:4]
+```
+
+1. Produce a barplot of counts of `Survived` from the Titanic dataset, facetted 
+by both `Sex` and `Class`
+
+```{r}
+ggplot(titanic.long) + geom_bar(aes(x=Survived)) + facet_grid(c("Sex","Class"))
+```
+
+2. Produce the same barplot as above, but with horizontal bars. (Hint: This is
+not done with `aes(y=...)`, but with a coordinate transformation function.)
+
+```{r}
+(ggplot(titanic.long) 
+  + geom_bar(aes(x=Survived)) 
+  + facet_grid(c("Sex","Class"))
+  + coord_flip()
+)
+```
+
+## Histograms, violin plots, and boxplots
+
+We continue to use the `gapminder` data for this section's exercises.
+
+1. Conceptual question: What are some advantages of violinplots vs. boxplots? 
+What are some disadvantages? 
+(Hint: consider the shape of a violin.)
+
+Advantages of violinplots
+ * Box plots only show one measure of central tendency (the median), which assumes that data are unimodal (have only a single peak). Violinplots will show if data are multimodal, which may be important when exploring certain types of data.
+ * Violinplots show more clearly if data are skewed, compared to boxplots.
+ * Violinplots show more detail than boxplots.
+
+Advantages of boxplots
+ * Boxplots are more legible when several are being compared side-by-side.
+ * Boxplots directly show summary statistics (median, quantiles) that a reader might be interested in, whereas these are not indicated on the violinplot.
+ * Boxplots explicitly show outlier points.
+ * Violinplots are less suitable for sparser datasets (e.g. < 20 data points)
+
+## Additional exercises: Base R graphics
+
+Although ggplot2 is a powerful and versatile package, it is still useful to 
+know how to plot in base R graphics.
+
+Exercises 1 and 2 use the `iris` dataset.
+
+```{r}
+data(iris)
+```
+
+1. Plot `Sepal.Length` vs. `Petal.Width`, and add a title and axis labels.
+
+```{r}
+plot(x=iris$Petal.Width,y=iris$Sepal.Length,col=iris$Species)
+```
+
+2. Add title and axis labels to the plot. (Hint: see help page for `plot` 
+function)
+
+```{r}
+plot(x=iris$Petal.Width,
+     y=iris$Sepal.Length,
+     col=iris$Species,
+     main="Iris data",
+     xlab="Petal width",
+     ylab="Sepal length")
+```
+
+Exercises 3, 4, and 5 use the following simulated data.
+
+```{r}
+df.random <- data.frame(x=1:100,y=rnorm(100))
+```
+
+3. Plot `df.random$y` vs. `df.random$x` as a line instead of points. 
+(Hint: `type` parameter)
+
+```{r}
+plot(x=df.random$x,
+     y=df.random$y,
+     type="l")
+```
+
+4. Annotate the above plot with a horizontal line at y = 0.5. 
+(Hint: look up the `abline` function)
+
+```{r}
+plot(x=df.random$x,
+     y=df.random$y,
+     type="l")
+abline(h=0.5)
+```
+
+5. Draw a histogram of `df.random$y`. (Hint: look up the `hist` function.) 
+
+```{r}
+hist(df.random$y)
+```
+
+6. Save the histogram plot as a PDF file.
+
+```{r}
+pdf("test_histogram.pdf")
+hist(df.random$y)
+dev.off()
+```
+

@@ -1,0 +1,1281 @@
+---
+title: "Basic plotting with ggplot2"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  html_notebook: 
+    fig_height: 2.5
+    fig_width: 4
+    toc: yes
+---
+
+Prepared by [Brandon Seah](mailto:kb.seah@tuebingen.mpg.de), June 2019, for the 
+"R for Bioscientists" course at MPI Developmental Biology.
+
+# Learning objectives
+
+By the end of this module, students should be able to ... 
+
+Conceptual:
+
+ * Define the components of a graphical plot, and be able to identify them in a 
+ given plot: data, aesthetic mapping, geometric object, statistical 
+ transformation, scaling, coordinate system, and facetting. 
+ * Describe commonly used aesthetic mappings: position, size, color.
+ * Be aware of perceptual limitations or possibly misleading results that can 
+ arise with certain aesthetic mappings, especially size and color.
+ * Explain the advantages of showing individual data points, in addition to 
+ summary statistics, and methods to avoid overplotting.
+
+Practical:
+
+ * Build a plot with `ggplot2` using `geom_`, `scale_` and `facet_` elements, 
+ specifically scatterplots, histograms, and boxplots.
+ * Apply data wrangling and tidy data skills learned from previous sessions to 
+ prepare data for `ggplot2`.
+ * Use ggplot2 inline documentation and find help online.
+
+# Prelude: Graphics in base R
+
+This is a brief overview of using the basic `plot` and graphics functions in R. 
+Although `ggplot2` is generally more intuitive and powerful, it may sometimes be
+more convenient to use base R graphics. It is also useful to know how they work, 
+especially when reading or using code written by others.
+
+Graphics functions in base R: `plot`, `points`, `hist`, `par`, `legend`, `text`, 
+`abline`, to name the most common ones.
+
+## Further reading
+
+ * [R Base Graphics: An Idiot's Guide](https://rpubs.com/SusanEJohnston/7953)
+ * Code demonstration of base R graphics, type the following in console: 
+ `demo(graphics::graphics)`
+ * See also the help pages and examples for the functions listed above.
+
+## Import data
+
+We'll play with the `iris` dataset that is bundled with R. 
+
+> *Did you know* 
+>
+> R comes with a diverse set of example data, that can be used for learning how 
+> to use R, and for testing your code.
+>
+> You can view a list of the available data by typing `data()` at the console.
+>
+> Passing the name of the dataset to `help()` or `?` will give you additional 
+> information about the dataset.
+>
+> This is why many R tutorials use examples like `iris` and `mtcars`
+> Many R packages are also bundled with their own example data. 
+
+
+```{r Load iris data}
+# Load iris dataset 
+data(iris)
+```
+
+Before we can plot anything, we should have a look at how the data object is 
+structured:
+
+
+```{r View iris data structure}
+# View structure of iris object
+str(iris) 
+```
+
+Within this data frame there are four numerical variables, and a factor variable 
+called `Species`. 
+
+Let's say we want to see how `Sepal.Length` and `Petal.Width` are correlated 
+with each other, for each of the three different species. 
+
+## Scatter plot
+
+Plotting one numerical variable vs. another with R's base `plot()` function will 
+yield a scatterplot by default. 
+
+```{r Base graphics scatterplot}
+# Plot Petal.Width vs. Sepal.Length, color points by Species
+plot(x=iris$Petal.Width,y=iris$Sepal.Length,col=iris$Species)
+```
+
+Which color corresponds to which species? Use `legend` to overlay a legend to 
+the plot:
+
+
+```{r Base graphics scatterplot with color legend}
+# Plot Petal.Width vs. Sepal.Length, color points by Species
+plot(x=iris$Petal.Width,y=iris$Sepal.Length,col=iris$Species)
+# Add legend for colors, to bottom right of plot
+legend(x="bottomright", # where to position the legend
+       col=c(1,2,3), # which colors to use 
+       legend=levels(iris$Species), # legend text
+       pch=1 # which plot character to use
+       )
+```
+
+Instead of color, the factor can also be mapped to the shape of the points 
+("plot character", hence `pch`), e.g. when you want to publish in a journal that 
+makes you pay extra for color:
+
+
+```{r Base graphics scatterplot with shape legend}
+# Plot Petal.Width vs. Sepal.Length, shape points by Species
+plot(x=iris$Petal.Width,y=iris$Sepal.Length,pch=as.numeric(iris$Species))
+legend(x="bottomright", # where to position the legend
+       pch=c(1,2,3), # which plot character to use 
+       legend=levels(iris$Species) # legend text
+       )
+```
+
+Why `pch=as.numeric(...)`? That's because takes `pch` takes a numeric argument, 
+whereas `iris$Species` is a factor, and so has to be coerced into the correct 
+class to deliver the desired results. Why does it work with `col`, then? 
+Actually you can try `col=as.numeric(iris$Species)` and that will work too, so I
+dunno.
+
+With base R graphics, a lot of manual control over plot parameters is possible, 
+but that requires familiarity with some of the squishy innards of R, and you 
+have to take care of some fairly basic things yourself:
+
+ * The legend is positioned within the plot area, if you want to put it outside 
+ the plot frame you need to specify dimensions and margins
+ * Plot character has to be manually specified in the legend
+ * Colors have to be manually specified, otherwise it uses the default palette, 
+ as in the above example
+ * Legend text has to be manually specified - as the plots get more complex, you 
+ have to make sure that `plot()` is reading off the levels of the factor in the 
+ same order as `levels()`, which is a common pitfall
+
+## Multi-panel plots
+
+We can also produce multipanel plots, where several plots are arranged in a 
+single figure as an array or grid of panels.
+
+The following example produces three plots of `Sepal.Length` vs. `Petal.Width`, 
+one each for a single species, and side by side.
+
+
+```{r Multipanel plot with par}
+# Set up a new graphics device with three "slots" in one row
+par(mfrow=c(1,3)) 
+
+# Plot subset of data for each of the three species, one per slot
+
+# For each value of Species
+for (sp in levels(iris$Species)) { 
+  # Subset the iris dataset
+  tmp <- subset(iris, Species==sp) 
+  # Plot the subset
+  plot(tmp$Sepal.Length, tmp$Petal.Width, main=sp)
+}
+```
+
+Phew! But notice a few things:
+
+ * The scales of each plot are all different. That's because each plot is 
+ independent. One could just as well have three completely unrelated plots side 
+ by side. 
+ * We used a loop to iterate across the values of Species, and we need to know 
+ ahead of time how many panels we want, to tell the `par()` function ahead of 
+ time.
+ * If we want to generate an array of plots ('facetting'), then we would need to 
+ figure out how to do it manually each time. 
+ 
+## Exporting images
+
+R has built-in functions to export graphics in various formats, including raster 
+images (`png`, `tiff`, `bmp`) and vector files (`pdf`, `svg`).
+
+The usage of these functions is somewhat unintuitive, but is based on the 
+concept of a graphics "device". Whenever you call a graphics function in R, the
+output is written to the currently active graphics device, which is typically a
+new window on screen. To write the image to a file, however, you have to define 
+a new device that directs the output to a file, produce the plot itself, and
+then close the device to complete the process. 
+
+
+```{r Base graphics export images, eval=FALSE}
+# Open new png graphics device (height and width are in pixels)
+png(file="test.png", width=800, height=600) 
+# Produce plot
+plot(x=iris$Petal.Width,y=iris$Sepal.Length,col=iris$Species)
+# Close graphics device
+dev.off()
+
+# Open new pdf graphics device
+pdf(file="test.pdf", width=8, height=6) # height and width are in inches
+# Produce plot
+plot(x=iris$Petal.Width,y=iris$Sepal.Length,col=iris$Species)
+# Close graphics device
+dev.off()
+```
+
+
+## The Upshot
+
+* Plotting in base R lets you control lots of tiny details, but you spend a lot 
+of time on low-level details.
+* ggplot2 lets you focus on high-level data visualization, saving you time, 
+mental effort, and typing.
+* However, ggplot2 also requires you to be familiar with the concept of tidy 
+data.
+
+Let's see how to do the equivalent with `ggplot2` now.
+
+# Elements of a plot
+
+Each data plot, like the ones shown above, can be broken down into the following 
+elements:
+
+ * **Data** - the underlying information that is being graphically represented
+ * **Aesthetic mapping** - the visual metaphor being used to represent the data
+ * **Geometric object** - the actual geometric form being used, e.g. points, 
+ lines, polygons, bars, heatmaps... 
+ * **Statistical transformation** - whether the individual data are plotted, or 
+ if they are first transformed or summarized by some statistical function such 
+ as the mean, standard deviation, etc.
+ * **Scaling** - transformation applied to the data when translating them into 
+ the aesthetic, e.g. linear or log scale for position, color scale
+ * **Coordinate system** - usually Cartesian, but could be polar, etc.
+ * **Facetting** - instead of a single plot, splitting the data up by some 
+ factor and generating an array of plots, one for each subset
+
+Data visualization is a kind of visual language, and like natural languages it 
+has a grammar of rules and conventions that people generally follow, although 
+they are usually learned subconsciously and exercised in an intuitive way. The 
+elements listed above are the building blocks of the "grammar of graphics", that
+was first systematically laid out in a book by Leland Wilkinson. `ggplot2` is 
+built on these principles (hence the `gg` in its name), although it doesn't 
+follow Wilkinson's scheme exactly. 
+
+Notice how the functions and parameters in `ggplot2` have names that tell you 
+which part of the grammar they belong to:
+
+ * **Data** - The data to be plotted is usually the first argument specified to 
+ the `ggplot()` function
+ * **Aesthetic mapping** - `aes` parameter 
+ * **Geometric object** - e.g. `geom_point()`, `geom_line()`, `geom_histogram()`
+ * **Statistical transformation** - `stat_identity()`, `stat_summary()`
+ * **Scaling** - `scale_x_log10()`, `scale_x_sqrt()`, `scale_color_continuous()`
+ * **Coordinates** - `coord_cartesian()`, `coord_flip()`, `coord_polar()`
+ * **Facetting** - `facet_wrap()`, `facet_grid()`
+
+# Basic graphics with `ggplot2`
+
+First let's load the library:
+
+```{r Load ggplot2 package, message=FALSE, warning=FALSE}
+# Load ggplot2 by itself
+library(ggplot2)
+# Load entire tidyverse, which includes ggplot2
+library(tidyverse)
+```
+
+# Scatterplot of two quantitative variables
+
+A scatterplot is probably the simplest data graphic to begin with. Each point 
+represents one observation, and the x- and y-positions of that point represent 
+some numerical data from that observation. We can also color the points, using 
+some factor-type data.
+
+
+```{r Scatterplot basic}
+# Call `iris` data with `ggplot`, specify type of plot with `geom_point`
+# Plot Petal.Width as x-axis and Sepal.Length as y-axis
+ggplot(data=iris) + geom_point(aes(x=Petal.Width,y=Sepal.Length))
+```
+
+The syntax is counterintuitive at first. Why use `+` to add `ggplot` and 
+`geom_point`? Why not a single function for the whole plot? Part of the reason 
+is that complex plots are built up from simpler layers "added" on top of each 
+other. 
+
+All ggplot plot commands start with the `ggplot` function, which specifies the 
+object (typically a data.frame) containing the data to be plotted. 
+
+The type of plot (in this case, scatterplot) is specified with a `geom_` type 
+function, in this case `geom_point()`.
+
+The position (`x=` and `y=`) are aesthetics, hence are specified wtih the 
+`aes(...)` parameter.
+
+## Scatterplot with points colored by factor
+
+Colors can be used to encode a factor-type variable, as well as quantitative
+variables (as we shall see later). 
+
+As color is an aesthetic mapping, this also belongs inside the `aes()` 
+specification.
+
+
+```{r Scatterplot colored points}
+# Scatterplot from above, with points colored by Species
+ggplot(iris) + geom_point(aes(x=Petal.Width, y=Sepal.Length, col=Species))
+```
+
+Notice how the legend is automatically generated, and is outside the plot frame. 
+
+## Scatterplot with element size scaled to a variable
+
+The size of a plot element can be scaled by a quantitative variable. The size 
+parameter also belongs within `aes()`.
+
+
+```{r Scatterplot with colored and scaled points}
+# Scatterplot from above, with points colored by Species, and sized by Sepal.Width
+ggplot(iris) + geom_point(aes(x=Petal.Width, y=Sepal.Length, col=Species, size=Sepal.Width))
+```
+
+Notice how the size parameter automatically re-scales to the max and min of the 
+data. As such it tends to exaggerate the differences in your data. To scale the 
+size quantitatively, such that a value of 0 corresponds to a point of zero area, 
+use `scale_size_area()`. This is simply added with `+` to the ggplot command 
+from before.
+
+
+```{r Scatterplot with points scaled by area}
+# Scatterplot from above, with plot element sizes scaled by area starting from 0
+ggplot(iris) + geom_point(aes(x=Petal.Width, y=Sepal.Length, col=Species, size=Sepal.Width)) + scale_size_area()
+```
+
+By default the size scaling is by area, not by width. This is because humans 
+perceive size differences in terms of area, so a width or radius-based scaling 
+would be misleading, as the area varies with the square of the radius.
+
+## Scatterplot with facetting 
+
+"Facetting" refers to multi-panel plots, where subsets of the data are plotted 
+side by side, and the axis scales are aligned.
+
+You may recall what a pain it is to produce such multipanel plots in base R 
+graphics. The task is much simpler with ggplot2.
+
+
+```{r Scatterplot with facetting}
+# Scatterplot from above, facetted by Species
+ggplot(iris) + geom_point(aes(x=Petal.Width, y=Sepal.Length, col=Species)) + facet_wrap(facets=c("Species"))
+```
+
+
+If the data have two or more categorical variables, you can produce a grid of 
+facets of one vs another variable. This is done with `facet_grid`, used 
+similarly as `facet_wrap`.
+
+## Scatterplot with logarithmic scale
+
+It's also easy to change from a linear scale to e.g. a logarithmic scale.
+
+
+```{r Scatterplot with log scale}
+# Apply log scale to x-axis
+ggplot(iris) + geom_point(aes(x=Petal.Width, y=Sepal.Length, col=Species)) + scale_x_log10()
+```
+
+## In-class Exercises
+
+*Exercise* - Plot a scatterplot of `Sepal.Length` vs. `Petal.Width` from `iris` where... 
+    a. ... the `Species` factor is encoded as the shapes of the points
+    b. ... the x-axis is scaled by square root
+    c. ... both the x- and y-axes are scaled by square root
+
+Do you notice anything unusual about c? What do you think is going on (or not)?
+
+```{r Exercises scatterplot 1}
+# Scatter plot with Species factor encoded as shapes
+ggplot(iris) + geom_point(aes(x=Petal.Width,y=Sepal.Length,shape=Species))
+# The above with square-root-scaled x-axis
+ggplot(iris) + geom_point(aes(x=Petal.Width,y=Sepal.Length,shape=Species)) + scale_x_sqrt()
+# The above with both axes scaled by sqrt
+ggplot(iris) + geom_point(aes(x=Petal.Width,y=Sepal.Length,shape=Species)) + scale_x_sqrt() + scale_y_sqrt()
+# sqrt scale looks almost linear between 4 and 8, the vertical range of this plot
+```
+
+*Exercise* Import the data from `Data/us_contagious_diseases.tsv` and subset for your 
+favorite year (see chunk below)
+    a. Scatterplot the `count` of cases vs. `population`, colored by `disease`.
+    b. Make the above plot more legible by using facetting and logarithmic 
+    scales on both axes. (Hint: if a variable contains zero values, use
+    `scale_x_continuous(trans="log1p")` instead of `scale_x_log10()`.)
+
+```{r Load contagion dataset}
+# Import contagion dataset
+contagion <- read.delim("../Data/us_contagious_diseases.tsv",sep="\t")
+# Subset for 1969
+contagion.1969 <- subset(contagion,year=="1969")
+```
+
+```{r Exercise scatterplot 2}
+ggplot(contagion.1969) + geom_point(aes(x=population,y=count,col=disease))
+ggplot(contagion.1969) + geom_point(aes(x=population,y=count,col=disease)) + scale_x_log10() + scale_y_continuous(trans="log1p") + facet_wrap("disease",nrow=1)
+```
+
+# Saving and exporting plots
+
+## Saving plots as named objects
+
+ggplot2 plots can be saved as named objects in your environment. Typing the name 
+of the object will then display the plot. This is unlike the `plot()` function 
+in base R, where to display the same plot again, you have to re-type the entire
+plot command.
+
+```{r Save plot to object}
+# Save iris plot to an object
+iris_plot1 <- ggplot(iris) + geom_point(aes(x=Petal.Width, y=Sepal.Length, col=Species))
+# Display the iris plot
+iris_plot1
+```
+
+What's the advantage of this? You can continue to add parameters to plot object.
+
+```{r Working with named ggplot objects}
+# Apply log scale to x-axis of iris_plot1 
+iris_plot1 + scale_x_log10()
+# Equivalent to:
+ggplot(iris) + geom_point(aes(x=Petal.Width, y=Sepal.Length, col=Species)) + scale_x_log10()
+```
+
+This saves on typing, and allows you to test different plotting options and 
+transformations more conveniently.
+
+## Exporting plots to image files
+
+Now that you have your beautiful plot, you want to export it so that you can 
+attach it to your manuscript/report/office door. ggplot2 has its own function 
+for exporting plots to image files, `ggsave()`. By default, it saves the last 
+plot that was drawn, unless told otherwise. It guesses the file format based on 
+the filename extension that you provide.
+
+```{r ggsave Example, eval=FALSE}
+# Run a ggplot command
+ggplot(iris) + geom_point(aes(x=Petal.Width, y=Sepal.Length, col=Species)) + scale_x_log10()
+# Export as pdf
+ggsave("test.pdf") 
+# Export as png
+ggsave("test.png") 
+# Export a named ggplot2 object to file, instead of the last plot
+ggsave("test2.pdf", plot=iris_plot1)
+```
+
+The size of the plot can be adjusted with `width`, `height`, and `units` 
+parameters. Acceptable units are inches ("in"), cm, or mm. 
+
+In general, most plots are edited in some way before they are ready for 
+publication, so it is probably a good idea to save such plots as either pdf or
+svg, so that they can be edited in a vector graphics editor like Adobe 
+Illustrator or Inkscape.
+
+If you want an image to share by email or to embed in a report, png format is a 
+good option, because file sizes are relatively small (unlike tiff), it supports 
+transparency (unlike bmp), and it uses lossless compression (unlike jpeg).
+
+*Exercise* - Export `iris_plot1` as as png file, 900 by 600 pixels.
+
+```{r Exercise ggsave, eval=FALSE}
+# Hint: Print resolution is 300 dpi
+ggsave("test3.png",plot=iris_plot1, width=3, height=2, units="in", dpi=300)
+```
+
+# Tidy data and ggplot2
+
+ggplot2 would like your data to be "tidy". What does that mean?
+
+In R's base graphics, you can plot a scatter plot from any two numerical 
+variables, whether or not they are in a single data frame.
+
+```{r Example base graphics arbitrary plot}
+vector1 <- 1:10
+vector2 <- rnorm(5) # Random variable
+vector3 <- rbinom(5,10,0.5) # Another unrelated random variable
+plot(x=vector1,
+     y=c(vector2,vector3))
+```
+
+If we want to plot them in ggplot2, we would first need to explicitly bind them
+together in a data.frame, with named columns.
+
+```{r Example ggplot2 arbitrary plot}
+#ggplot() + geom_point(aes(x=vector1,y=c(vector2,vector3))) # This doesn't work
+# Data must be a data frame
+df.example <- data.frame(x=vector1,
+                         y=c(vector2,vector3))
+ggplot(df.example) + geom_point(aes(x=x,y=y))
+```
+
+In this way, the semantics of the plot are always clear. ggplot2 hence enforces 
+a disciplined approach to organizing data into objects.
+
+Another distinction is between "long" and "wide" data.frames.
+
+```{r Import US polls data}
+# Import polling data
+uspolls <- read.delim("../Data/polls_us_election_2016.tsv")
+# Subset the polling data
+uspolls.abc <- uspolls %>% filter(pollster=="ABC News/Washington Post" & state=="U.S.")
+```
+
+Let's say we want to plot the trends of different candidates polling by date.
+
+```{r Example line plot}
+ggplot(uspolls.abc) + geom_line(aes(x=enddate,y=adjpoll_clinton,group=1))
+# The importance of the `group` parameter will become clear later on
+```
+
+But this is just for one candidate. We want to have four lines, one per 
+candidate, overlaid on the same plot, maybe in different colors.
+
+What does this mean in terms of graphical grammar? We would like to use the 
+color aesthetic on the candidate names, which are a factor variable. We want the 
+lines connecting points grouped by the candidate name, too (hence "group" 
+aesthetic). 
+
+However in the `uspolls` data.frame, the candidate names are not encoded as a 
+variable, but part of the column names. We want to somehow gather up these 
+columns and recast them as a new column, "candidate". This is converting from 
+"wide" to "long" data format. 
+
+This will be clearer with an example:
+
+Converting between long and wide data can be done with the `tidyr` package, part 
+of `tidyverse`. This has two basic functions, `gather` and `spread`.
+
+```{r Convert from wide to long data}
+# Structure of wide data
+str(uspolls.abc) 
+# Convert to long with `gather`
+uspolls.abc.long <- uspolls.abc %>% 
+  select(startdate,enddate,starts_with("adj")) %>% # Select only columns of interest
+  gather(key="candidate",
+         value="adjpoll",
+         adjpoll_clinton, adjpoll_trump, adjpoll_johnson, adjpoll_mcmullin)
+# Structure of long data
+str(uspolls.abc.long)
+# Convert back to wide with `spread`
+spread(uspolls.abc.long, key="candidate",value="adjpoll")
+```
+
+Now we can plot the lines, grouped and colored by factor.
+
+```{r Example line plot grouped by factor}
+ggplot(uspolls.abc.long) + geom_line(aes(x=enddate,y=adjpoll,group=candidate,col=candidate))
+```
+
+
+*Exercise* - The spacing of `enddate` doesn't look right. How do we get the 
+dates to be spaced correctly?
+
+```{r Exercise date variables}
+# Take a closer look at the variables...
+class(uspolls.abc.long$startdate)
+class(uspolls.abc.long$enddate)
+# `startdate` and `enddate` parameters have to be converted to class Date
+uspolls.abc.long$startdate <- as.Date(uspolls.abc.long$startdate) # Note uppercase D
+uspolls.abc.long$enddate <- as.Date(uspolls.abc.long$enddate)
+(ggplot(uspolls.abc.long) 
+  + geom_line(aes(x=enddate,
+                  y=adjpoll,
+                  group=candidate,
+                  color=candidate))
+)
+```
+
+# Bar plots and stacked bar plots
+
+For this section we shall use use the `Titanic` data bundled with R. Run the 
+following code chunk to reformat the original tables to data frames of 
+individual observations.
+
+```{r Reformat Titanic data}
+# Load data
+data(Titanic)
+# Convert to data.frame
+titanic.df <- as.data.frame(Titanic)
+# Convert to long format
+titanic.long <- titanic.df[rep(row.names(titanic.df),titanic.df$Freq),1:4]
+# Preview format of data 
+str(titanic.long)
+```
+
+## Simple bar plot of factor with `geom_bar()`
+
+Bar plots automatically apply the `stat_count()` statistical transformation. 
+That is to say, if you have raw data in long format, where each row represents 
+one observation, then these will be automatically tabulated according to the 
+factor of your choice.
+
+```{r Barplot example}
+# Plot bar plot of Sex of passengers/crew on the Titanic
+ggplot(titanic.long) + geom_bar(aes(x=Sex))
+```
+
+*Exercise* - Plot a barplot of passengers/crew on the Titanic by class. 
+
+```{r Exercise barplot}
+# Plot bar plot of Class of passengers/crew on the Titanic
+ggplot(titanic.long) + geom_bar(aes(x=Class))
+```
+
+Notice that there is only one parameter `x=` given to `aes()`. This is because 
+the y-axis (height aesthetic) is automatically generated by counting the number 
+of observations per factor, and so it does not have to be explicitly given to 
+the function.
+
+## Simple bar plot of factor with `geom_col()`
+
+With `geom_bar()`, the `stat_count` transformation is automatically applied. 
+This makes it suitable for working with raw observational data. 
+
+Difference between "long" data with individual observations and summarized count
+data:
+
+```{r Compare individual observations vs. summarized counts}
+# Preview the long vs. summarized versions of the titanic data
+head(titanic.long)
+head(titanic.df)
+```
+
+
+What if you have data that are already summmarized into counts? One can either 
+convert it into long format, as done at the beginning of this section, or use 
+the `geom_col()` function. For `geom_col()`, the variable representing the 
+y-axis must be specified.
+
+```{r Barplot with summarized count data}
+# Bar plot of Freq vs Class with geom_col
+ggplot(titanic.df) + geom_col(aes(x=Class,y=Freq))
+```
+
+## Stacked bar plots 
+
+In a stacked bar plot, the categories are not placed side-by-side in adjacent 
+bars, but are stacked up into a single bar with multiple segments. The different 
+segments are usually distinguished from each other by fill color.
+
+Think logically: If the aesthetic mapping is now the color... 
+
+```{r Stacked bar plot}
+# Stacked bar plot with Class as color
+ggplot(titanic.long) + geom_bar(aes(fill=Class,x=1))
+```
+
+Notice a few peculiarities here:
+ * The aesthetic is not `col` but `fill`. What happens if you use `col`?
+ * A "dummy" `x=1` aesthetic is still required for formal reasons, even if you 
+ want to plot only one bar.
+
+*Exercise* - Plot a stacked bar plot, with one bar for each Sex, and bar 
+segments colored by Class.
+
+```{r Exercise stacked bar plot}
+# Stacked bar plot of Class, with Sex on the x-axis
+ggplot(titanic.long) + geom_bar(aes(x=Sex,fill=Class))
+```
+
+
+# Histograms, violin plots, and boxplots of one-dimensional variables
+
+Histograms are similar to bar plots, in that they make use of counts to 
+summarize data. However, the counts are not grouped by a categorical variable, 
+but instead by subdividing a continuous, quantitative variable into "bins". 
+
+The width of the bins is usually determined heuristically or empirically. If 
+bins are too wide, you may miss out certain patterns or features in your data. 
+If bins are too narrow, you may not see bigger trends because the scale is too 
+fine.
+
+For this example we shall import the `heights.tsv` data provided by Jacobo.
+
+```{r Import data for histogram examples}
+hts <- read.delim("../Data/heights.tsv")
+str(hts)
+```
+
+## Basic histogram
+
+Histograms take only one variable for aesthetic mapping.
+
+```{r Histogram basic}
+# Histogram of height
+ggplot(hts) + geom_histogram(aes(x=height))
+```
+
+By default, ggplot's `geom_histogram()` function uses `bins=30`, as it warns you 
+every single time you deploy this function. As stated in the documentation, this
+is not a magic number, but merely a starting point for you to test out different 
+values that may better fit your data. The point is actually to encourage the 
+user to explore the data, so don't just settle for the default!
+
+The `hist()` function in base R graphics uses an algorithm to calculate a 
+suitable number of bins for a given set of data. It is also possible to specify
+such a function to `geom_histogram()` instead of hard-coding a number of bins or 
+a specific binwidth. For more information, see the help pages for `hist` and 
+`geom_histogram`.
+
+## Histogram stacked by a factor
+
+This is similar to stacked bar plots, where each bar is segmented into parts by 
+some factor or categorical variable.
+
+```{r Histogram stacked by factor}
+# Histogram of height colored by sex
+ggplot(hts) + geom_histogram(aes(x=height,fill=sex))
+```
+
+## Violin plot 
+
+Violin plots are like histograms, except turned on their side, and vertically 
+symmetrical. Such plots often look like violins, or other curvy and symmetrical 
+objects, hence the name.
+
+```{r Violin plot}
+# Violin plot of height vs. sex
+ggplot(hts) + geom_violin(aes(y=height,x=sex))
+```
+
+*Exercise* - Draw a violin plot of `hts` dataset, but colored by sex.
+
+```{r Exercise violin plot with fill color}
+# Violin plot of height colored by sex
+ggplot(hts) + geom_violin(aes(y=height,x=sex,fill=sex))
+```
+
+## Boxplot
+
+Boxplots (or box-and-whisker plots) are also vertical, like violin plots. 
+However, they bin the data much more coarsely than histograms or violinplots, 
+representing a given dataset with a five-number summary. 
+
+The middle line of a boxplot is the median. The upper and lower sides of the box 
+("hinges") are the 25th and 75th percentiles. The upper whisker extends to the 
+largest value no further than 1.5 times the interquartile range (IQR, the range 
+covered by the hinges) from the upper hinge, and the lower whisker to the 
+smallest value at least 1.5 times the IQR from the lower hinge. Points that fall 
+outside the whiskers are plotted individually and are considered to be outliers. 
+
+Note that the ggplot2 boxplot uses a different method for choosing the hinges 
+than R's default `boxplot()` function.
+
+```{r Boxplot example}
+# Boxplots of height vs. sex
+ggplot(hts) + geom_boxplot(aes(y=height,x=sex))
+```
+
+Boxplots can be overlaid with the individual data points.
+
+```{r Boxplot with overlay}
+# Boxplots of height vs. sex overlaid with individual data points
+ggplot(hts) + geom_boxplot(aes(y=height,x=sex)) + geom_point(aes(y=height,x=sex))
+```
+
+However two things to note about overlaying data points in this manner: 
+
+ * Overlapping points will obscure your data. See "Dealing with overplotting or
+ dense data" below.
+ * Outlier points will be plotted twice - once in the boxplot, and again in the 
+ scatterplot. Outliers can be hidden in the boxplot (hint: see help page for 
+ `geom_boxplot()`)
+
+# Summary: Steps in building a plot
+
+ 1. Know what you want to plot
+ 2. Start with `ggplot()` to specify data object 
+ 3. Add a `geom_` layer and specify appropriate `aes` aesthetic. Repeat as 
+ necessary to overlay
+ 4. Change `stat_`, `scale_` and `coord_` if the defaults are not what you want
+ 5. Apply `facet_` by a given factor if necessary
+
+
+# Some useful practices in data visualization
+
+## Show your data
+
+If you have few data points, it is a good idea to show the individual points, 
+and not just summary statistics (e.g. mean and standard deviation).
+
+## Maximize the data-ink ratio
+
+The concept of "data-ink ratio" was popularized by Edward Tufte. It states that 
+the amount of ink (or pixels) used to present the data in the graphic should 
+constitute as much of the total ink (or pixels) used by the graphic. Decorative 
+or secondary elements, such as frames, background colors, shadow effects, 
+should be eliminated if they do not contribute to understanding, or unobtrusive 
+in the case of visual guides like gridlines or axis labels. Tufte calls these 
+unnecessary elements "chartjunk".
+
+`ggplot2` generally does a good job of minimizing chartjunk in its default 
+settings.
+
+## Dealing with overplotting or dense data
+
+If you have too many data points, plotting the individual points can obscure the 
+actual distribution pattern, as points overlap with each other. Depending on the 
+kind of plot, there are a number of ways to deal with this. The iris dataset is 
+quite sparse, so we'll use the `diamonds` dataset which is much denser.
+
+
+```{r}
+data(diamonds)
+str(diamonds)
+```
+
+
+### Jittering to deal with overlapping points
+
+Useful only with one-dimensional data. Instead of plotting them in a straight 
+line, you can "jitter" them in either the x or y axis so they don't overlap:
+
+Without jittering:
+
+
+```{r}
+ggplot(diamonds) + geom_point(aes(x=cut,y=price)) 
+```
+
+With jittering:
+
+
+```{r}
+(ggplot(diamonds) 
+ + geom_jitter(aes(x=cut,y=price), 
+               height=0,  # Don't jitter in the vertical axis (i.e. Sepal.Length)
+               width=0.2 # Jitter only 0.2 width in the horizontal axis
+               )
+ + scale_y_log10() # better spread of the data
+ )
+```
+
+Slightly better.
+
+### Transparency to deal with overlapping points
+
+By making points slightly transparent, you can see where they are overlapping.
+However this is effective only when the points are only moderately dense.
+
+### Rescaling points from a skewed distribution
+
+Data that derive from a highly skewed distribution may be tightly bunched up at 
+one end of the range, but widely-spaced at the other, when plotted with a 
+default linear scale.
+
+In such situations, rescaling with a logarithmic or square root scale may space
+out the points more evenly and make them easier to interpret.
+
+### Binning one-dimensional data with histograms
+
+If the data are one-dimensional a simple histogram will be a more legible 
+overview of their distribution than individual data points.
+
+
+```{r}
+ggplot(diamonds) + geom_histogram(aes(price)) + scale_x_log10()
+```
+
+### Summary statistics with boxplots or violinplots
+
+If you want to show several distributions side by side, arrayed by factor, you 
+could `facet_wrap` an array of histograms by that factor, or use boxplots, as 
+explained above.
+
+
+```{r}
+(ggplot(diamonds) 
+ + geom_boxplot(aes(x=cut,y=price))
+ + scale_y_log10()
+ )
+```
+
+Or with violinplots:
+
+```{r}
+(ggplot(diamonds) 
+ + geom_violin(aes(x=cut,y=price))
+ + scale_y_log10()
+)
+```
+
+
+### Binning two-dimensional data with heatmaps
+
+If you wish to visualize the distribution of data in two dimensions, a histogram 
+is insufficient. However, one can bin in two dimensions, and use a color scale 
+to represent the density of the data.
+
+One can imagine this as a scatterplot where the density of the data are plotted, 
+instead of the individual points.
+
+
+```{r}
+(ggplot(diamonds, aes(x=depth, y=price)) 
+ + geom_bin2d()
+ + scale_y_log10() # Make the spread of values easier to see
+)
+```
+
+
+One can also use hexagonal bins:
+
+
+```{r}
+library(hexbin) # Requires this package to be installed, if you don't have it already
+(ggplot(diamonds, aes(x=depth, y=price)) 
+ + geom_hex()
+ + scale_y_log10() # Make the spread of values easier to see
+ )
+```
+
+
+### Binning two dimensional data with contour plots
+
+Like on topographical maps. You should be able to figure this one out by now!
+
+Hint: It's not `geom_contour`
+
+
+```{r}
+(ggplot(diamonds, aes(x=depth, y=price)) 
+ + geom_density_2d(aes(color=stat(level))) # color by levels of density
+ + scale_y_log10() # Make the spread of values easier to see
+ )
+```
+
+
+## Using colors responsibly
+
+### Avoid rainbow scales for quantitative data 
+
+What people perceive is not just color but also apparent brightness. Colors on a 
+rainbow scale, although "evenly spaced", are not equally bright to the eye:
+
+
+```{r}
+palette(rainbow(6, # presented by Tom Clancy
+                start=0)) 
+barplot(rep(1,times=6),col=1:6, axes=FALSE)
+```
+
+
+The blue is noticeably darker than the cyan next to it. Yellow appears somewhat 
+brighter than the adjacent red and green.
+
+Using a rainbow scale will mislead people into seeing discontinuities in the
+data where there are not.
+
+
+```{r}
+(ggplot(diamonds, aes(x=depth, y=price)) 
+ + geom_density_2d() 
+ + stat_density_2d(geom="raster", aes(fill=stat(density)), contour=FALSE)
+ + scale_fill_gradientn(colors=rainbow(6,start=0)) # Destroy your retinas
+ + scale_y_log10() # Make the spread of values easier to see
+ )
+```
+
+If we are asked to pick a cutoff value, we would naturally be drawn to the 
+bright yellow line or the dark blue lines.
+
+Consider the example of where to define the gates in flow cytometry, for
+example.
+
+Fortunately the defaults in ggplot2 have been sensibly chosen. The default color 
+scale is not so painful:
+
+
+```{r}
+(ggplot(diamonds, aes(x=depth, y=price)) 
+ + geom_density_2d() 
+ + stat_density_2d(geom="raster", aes(fill=stat(density)), contour=FALSE)
+ + scale_y_log10() # Make the spread of values easier to see
+ )
+```
+
+### Color-blind-safe colors
+
+A number of the Color Brewer palettes are color-blind-safe (see 
+[ColorBrewer2 homepage](http://colorbrewer2.org/#)).
+
+The Viridis color scales are also designed with color-blindness in mind.
+
+**Further reading**
+
+ * ["Color palettes matter"](http://mkweb.bcgsc.ca/brewer/talks/color-palettes-brewer.pdf) by Martin Krzywinski
+
+## The "Bars-and-Stars" plot
+
+I don't mean [this](https://en.wikipedia.org/wiki/United_States_Army_officer_rank_insignia), but [this](http://felixfan.github.io/bar-plot/).
+
+Let's break down what goes into this graph:
+
+ * Bar - some kind of central tendency, usually the mean
+ * Error bars - some measure of spread, or a confidence interval 
+ * Stars representing results of some kind of significance test
+
+For descriptive statistics and data exploration, bars and stars plots are not 
+really useful because they obscure the actual data underlying the plot. See 
+["Kick the bar chart habit"](https://www.nature.com/articles/nmeth.2837) from 
+the Points of Significance blog for a fuller explanation on why bar charts are 
+not recommended for most purposes.
+
+Using the `iris` dataset again:
+
+
+```{r}
+(ggplot(iris,aes(x=Species,y=Sepal.Width))
+  + geom_boxplot(outlier.shape = NA) # Don't plot outliers, because the raw data will be overlaid
+  + geom_jitter(width=0.2,height=0) # Jitter in the horizontal but not vertical axis
+)
+```
+
+
+> "But I really really want a bar plot!"
+
+The boxplot has some advantages compared to the plain bars, because it ... 
+
+> "NOW!"
+
+Okay fine.
+
+
+```{r}
+(ggplot(iris,aes(x=Species,y=Sepal.Width)) 
+  + stat_summary_bin(geom="bar",fun.y="mean") # Fill up space with little information
+  + stat_summary_bin(geom="errorbar") # Add error bars
+)
+```
+
+But wait, these error bars are suspiciously narrow! And there was a warning 
+message, too. 
+
+The default summary function used to calculate the error bars is `mean_se()`, 
+which gives mean +/- standard error of the mean (SE). But beware! The SE looks 
+nice and narrow, but it is not necessarily what you really want. 
+
+For the standard deviation, you'll need to specify the summary function 
+`mean_sdl` explicitly. `mean_sdl` by default gives error bars of 2 standard 
+deviations. For 1 standard deviation, you'll need to supply it as an 
+[anonymous (or "lambda") function](https://en.wikipedia.org/wiki/Anonymous_function):
+
+
+```{r}
+(ggplot(iris,aes(x=Species,y=Sepal.Width)) 
+  + stat_summary_bin(geom="bar",fun.y="mean") # Fill up space with little information
+  + stat_summary_bin(geom="errorbar",fun.data= function(x) {mean_sdl(x,mult=1)}) # Add error bars
+)
+```
+
+Why is it so hard to do in ggplot2?
+
+ * Make you think about what your error bars actually represent
+ * For EDA and/or summary statistics, boxplots + points overlay is a better 
+ choice
+
+
+# Common pitfalls
+
+## Pitfall 1. Data is not structured properly
+
+Let's go back to the `iris` dataset. There are four numerical variables being 
+measured: the height and width of petals, and height and width of sepals. 
+
+
+```{r}
+head(iris) # take a peek
+```
+
+
+How can I color the plot by flower-part, i.e. "sepal" and "petal"? Let's try 
+`ggplot(iris) + geom_point(col=... wait a moment` 
+
+"Sepal" and "Petal" are part of the variable names, but these variables could be 
+named "boo", "coo", "doo" and "foo" for that matter. To color, you need the 
+flower part name to be a factor variable. 
+
+In other words, you need to convert the table from "wide" to "long" format.
+
+
+```{r}
+# Add a new column numbering each specimen from 1 to N
+iris.named <- data.frame(iris, specimen=1:dim(iris)[1]) 
+
+# Use gather from tidyr package (part of tidyverse) to gather up the numerical 
+# variables
+iris.long <- iris.named %>% 
+  gather(key="measurement", 
+         value="value", 
+         Sepal.Length, 
+         Sepal.Width, 
+         Petal.Length, 
+         Petal.Width)
+head(iris.long)
+```
+
+Split the column "measurement" by the "." character - aren't you glad the 
+variables were not named foo, doo, etc?
+
+
+```{r}
+iris.long.split <- iris.long %>% 
+  separate(col="measurement",into=c("part","parameter"),sep="[.]")
+
+head(iris.long.split)
+```
+
+
+```{r}
+# Now spread it out again by "parameter"
+iris.new <- iris.long.split %>% 
+  spread(key="parameter", value="value")
+
+head(iris.new)
+```
+
+Okay now we can plot
+
+
+```{r}
+ggplot(iris.new) + geom_point(aes(Length,Width,col=part))
+```
+
+**Exercises** 
+
+ 1. Explain why we had to add the column `specimen` above. 
+ 2. Explain why `gather()`ing by the column `Species` wouldn't make sense.
+
+**Further reading** ["Tidy data"](http://vita.had.co.nz/papers/tidy-data.pdf) by 
+Hadley Wickham
+
+## Pitfall 2. Mixing up `fill` and `col` aesthetics
+
+This is a common oversight, when using geoms like histograms, where colors can 
+be defined by either the `col` or `fill` aesthetics.
+
+If you notice your histogram (or bar plot) looking like this:
+
+```{r}
+ggplot(hts) + geom_histogram(aes(x=height,col=sex))
+```
+
+What you probably want instead is the `fill` aesthetic:
+
+```{r}
+ggplot(hts) + geom_histogram(aes(x=height,fill=sex))
+```
+
+## Pitfall 3. Continuous vs. qualitative color scales
+
+```{r}
+# Simulate some data for this section
+df.norm <- data.frame(x=rnorm(100,mean=5),
+                      y=rnorm(100,mean=5),
+                      z=rnorm(100,mean=0))
+```
+
+
+Suppose you've heard about the wonderful ColorBrewer palettes. You would like 
+to apply one of the diverging color scales, "BrBG" to your data, but you 
+encounter the error message "Error: Continuous value supplied to discrete scale" 
+when you run the following command:
+
+```{r eval=FALSE}
+# The following throws an error 
+(ggplot(df.norm) 
+  + geom_point(aes(x=x,y=y,col=z)) 
+  + scale_color_brewer(palette="BrBG") 
+)
+```
+
+This is because ggplot2 has two kinds of color scales: discrete and continuous. 
+Discrete scales take an integer number of values and are best suited for factors
+(categorical variables). Continuous scales interpolate between two or more 
+points in color space, and so are suitable for continuous variables, like the 
+one above. 
+
+To use a ColorBrewer scale on continuous data, use the `scale_color_distiller` 
+function:
+
+```{r}
+# "Distill" a discrete color scale into a continuous one
+# This interpolates colors between the discrete palette, to make a continuous
+# scale
+(ggplot(df.norm) 
+ + geom_point(aes(x=x,y=y,col=z)) 
+ + scale_color_distiller(palette="BrBG")
+)
+```
+
+By default, ggplot2 will use `scale_color_continuous()` for continuous data, and 
+`scale_color_hue()` for categorical/discrete data. See the help pages of those 
+functions for palette options.
+
+## Pitfall 4. Zero values in log-scaled plots
+
+If you try to rescale a plot with a logarithmic scale, you may sometimes
+encounter a warning message "Transformation introduced infinite values in 
+continuous y-axis":
+
+```{r}
+# Make up some data
+df.gamma <- data.frame(x=rgamma(1000,0.4),y=rgamma(1000,0.4))
+# Set values below 0.0001 to zero. This simulates what might happen with 
+# measurements that are below the detection limit of an instrument
+df.gamma$x[which(df.gamma$x<=0.0001)] <- 0
+df.gamma$y[which(df.gamma$y<=0.0001)] <- 0
+
+# Plotting variable with zeroes on a log scale results in a warning
+ggplot(df.gamma) + geom_point(aes(x=x,y=y)) + scale_y_log10()
+```
+
+This is because the quantity log(0) is -Inf. To avoid this, you can use the 
+`log1p` transformation instead of a log transformation. log1p is defined as 
+`log1p(x) = log(x+1)`. This prevents zero values from being undefined. However, 
+it is only suitable for variables that are non-negative.
+
+```{r}
+ggplot(df.gamma) + geom_point(aes(x=x,y=y)) + scale_y_continuous(trans="log1p")
+```
+
+Notice that the log1p transformation is not so effective at spreading out values 
+between 0 and 1.
+
+If you have variables that can take negative values, an alternative is the 
+square root transformation `scale_x_sqrt()`.
+
+## Pitfall 5. Breaking a ggplot command across multiple lines
+
+Sometimes you want to break a ggplot command across several lines for the sake 
+of legibility. However the following code will not work:
+
+```
+ggplot2(mtcars, aes(x=cyl,y=mpg))
++ geom_point()
+```
+
+That's because the whole thing is a single statement, but R will not know that, 
+and will try to interpret each line as a separate command, throwing an error on 
+the second line (try it and see).
+
+Instead you should enclose the whole command in parentheses, so that R will wait 
+for the closing parenthesis before running the command:
+
+```{r}
+(ggplot(mtcars, aes(x=cyl,y=mpg))
+ + geom_point()
+)
+```
+
+
+# Readings and resources
+
+On ggplot2 in particular:
+
+ * [ggplot2 cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
+ * Hadley Wickham (2010) [A Layered Grammar of Graphics](http://vita.had.co.nz/papers/layered-grammar.pdf) - original paper describing how the grammar of graphics was implemented in `ggplot2` and the reasoning behind the package's design.
+ * Garrett Grolemund & Hadley Wickham (2017) [R for Data Science](https://r4ds.had.co.nz/) - Chapter 3 ["Data Visualization"](https://r4ds.had.co.nz/data-visualisation.html) is mostly about `ggplot2`
+
+On data visualization generally:
+
+ * Howard Wainer (1984) [How to display data badly](https://www.jstor.org/stable/2683253)
+ * Edward Tufte. The Visual Display of Quantitative Information (ISBN 978-1930824133)
+ * Howard Wainer (1997) Visual Revelations (ISBN 9780387949024)
+ * Leland Wilkinson. The Grammar of Graphics

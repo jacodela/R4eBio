@@ -1,0 +1,205 @@
+---
+title: "Basic plotting with ggplot2 - Homework"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+# Homework exercises
+
+## Data visualization concepts
+
+"Food for thought" questions - no strictly right or wrong answers, just to get 
+you to start thinking about how data visualization works.
+
+1. Explain a histogram in terms of the graphical elements listed above.
+
+2. Explain Florence Nightingale's 
+ [coxcomb diagram](http://www.florence-nightingale-avenging-angel.co.uk/Coxcomb.tif) 
+ in terms of the graphical grammar. 
+ [Further reading](http://www.florence-nightingale-avenging-angel.co.uk/?p=462)
+
+3. How is scaling different from a coordinate system?
+
+## Scatterplots 
+
+Load the `gapminder.tsv` data from Jacobo for the following exercises.
+
+```{r}
+gapminder <- read.delim("../Data/gapminder.tsv")
+```
+
+1. What is the relationship between fertility and population? 
+Plot a scatterplot of fertility vs population for all countries for 1970. 
+Save the plot to a named ggplot object, e.g. `fertility_population_1970`. 
+
+```{r}
+
+```
+
+2. In the plot above, also color the points by continent.
+
+```{r}
+
+```
+
+3. In the plot above, also scale the point sizes by gdp. 
+
+Note the error message, which did not appear before. 
+What does it mean? 
+How might you preprocess the data to deal with this? Should you?
+
+```{r}
+
+```
+
+> The error message only appeared when the variable `gdp` was added to the plot. 
+> This probably means that the column `gdp` in the data.frame has some missing 
+> values, which were omitted from the plot. 
+
+> One way to deal with this is to filter the table before plotting. However, 
+> when exploring the data for the first time, it is usually worth checking which 
+> values are missing. This may indicate problems with the upstream data 
+> processing, or it may be the relevant to the analysis or interpretation of 
+> your data and its reliability.
+
+4. The points are not evenly spaced in the plot, but skewed to one side. 
+
+How might you improve legibility? (Hint: This is a matter of scaling...)
+
+```{r}
+
+```
+
+
+5. Export the plot as a PDF file, 10 by 5 cm in size.
+
+```{r}
+
+```
+
+## Line plots
+
+We continue to use the `gapminder` data for this exercise (see above).
+
+1. How has life expectancy changed over time? Plot the life expectancy (vertical
+axis) vs. year (horizontal) with `geom_line`, drawing one line per country.
+(Reminder: Use the `group` aesthetic.)
+
+```{r}
+
+```
+
+2. The above is not very legible or informative. Color and facet the lines by 
+continent to help the reader see some trends. (Hint: Use facet_wrap)
+
+Does it make more sense to have the facets in a single row or a single column?
+
+```{r}
+
+```
+
+3. *Challenge* - Superimpose a summary trend line for each continent. 
+(Hint 1: Look up the ggplot2 reference to find another geom that draws trend 
+lines.)
+(Hint 2: Lighten the individual lines with the `alpha` parameter in the 
+`geom_line()` function.)
+
+```{r}
+
+```
+
+## Barplots
+
+We use the Titanic dataset for this exercise.
+
+```{r}
+# Run this first to reformat the Titanic dataset 
+# Load data
+data(Titanic)
+# Convert to data.frame
+titanic.df <- as.data.frame(Titanic)
+# Convert to long format
+titanic.long <- titanic.df[rep(row.names(titanic.df),titanic.df$Freq),1:4]
+```
+
+1. Produce a barplot of counts of `Survived` from the Titanic dataset, facetted 
+by both `Sex` and `Class`
+
+```{r}
+
+```
+
+2. Produce the same barplot as above, but with horizontal bars. (Hint: This is
+not done with `aes(y=...)`, but with a coordinate transformation function.)
+
+```{r}
+
+```
+
+## Histograms, violin plots, and boxplots
+
+We continue to use the `gapminder` data for this section's exercises.
+
+1. Conceptual question: What are some advantages of violinplots vs. boxplots? 
+What are some disadvantages? 
+(Hint: consider the shape of a violin.)
+
+## Additional exercises: Base R graphics
+
+Although ggplot2 is a powerful and versatile package, it is still useful to 
+know how to plot in base R graphics.
+
+Exercises 1 and 2 use the `iris` dataset.
+
+```{r}
+data(iris)
+```
+
+1. Plot `Sepal.Length` vs. `Petal.Width`, and add a title and axis labels.
+
+```{r}
+
+```
+
+2. Add title and axis labels to the plot. (Hint: see help page for `plot` 
+function)
+
+```{r}
+
+```
+
+Exercises 3, 4, and 5 use the following simulated data.
+
+```{r}
+df.random <- data.frame(x=1:100,y=rnorm(100))
+```
+
+3. Plot `df.random$y` vs. `df.random$x` as a line instead of points. 
+(Hint: `type` parameter)
+
+```{r}
+
+```
+
+4. Annotate the above plot with a horizontal line at y = 0.5. 
+(Hint: look up the `abline` function)
+
+```{r}
+
+```
+
+5. Draw a histogram of `df.random$y`. (Hint: look up the `hist` function.) 
+
+```{r}
+
+```
+
+6. Save the histogram plot as a PDF file.
+
+```{r}
+
+```
+
